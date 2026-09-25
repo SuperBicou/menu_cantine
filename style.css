@@ -1,0 +1,414 @@
+* {
+    box-sizing: border-box;
+}
+
+
+/* =============================
+   BASE
+============================= */
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    min-height: 100%;
+}
+
+
+body {
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: Arial, sans-serif;
+
+    background: #eef2f6;
+    color: #1f2937;
+}
+
+
+/* =============================
+   CONTENEUR
+============================= */
+
+.container {
+    width: fit-content;
+
+    max-width: calc(100% - 30px);
+
+    margin: 25px auto;
+
+    background: white;
+
+    border-radius: 16px;
+    overflow: hidden;
+
+    box-shadow:
+        0 12px 35px
+        rgba(15, 23, 42, 0.10);
+}
+
+
+/* =============================
+   EN-TÊTE
+============================= */
+
+.page-header {
+    padding:
+        14px
+        10px
+        11px;
+
+    text-align: center;
+
+    background: #1e293b;
+    color: white;
+}
+
+
+h1 {
+    margin: 0;
+
+    font-size: 22px;
+}
+
+
+.date {
+    margin-top: 4px;
+
+    font-size: 12px;
+
+    color: #cbd5e1;
+}
+
+
+/* =============================
+   RESTAURANTS
+============================= */
+
+.restaurants {
+    display: grid;
+
+    grid-template-columns:
+        var(--col-size, max-content)
+        var(--col-size, max-content);
+}
+
+
+.restaurant {
+    padding:
+        9px
+        5px;
+
+    text-align: center;
+
+    font-size: 19px;
+    font-weight: 800;
+}
+
+
+.restaurant-4704 {
+    background: #fff4e8;
+
+    color: #b45309;
+}
+
+
+.restaurant-4503 {
+    background: #edf6ff;
+
+    color: #1d4ed8;
+}
+
+
+/* =============================
+   CATÉGORIES
+============================= */
+
+.categorie-section {
+    border-top:
+        1px solid #dbe1e8;
+}
+
+
+.categorie-titre {
+    margin: 0;
+
+    padding:
+        7px
+        5px;
+
+    text-align: center;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.07em;
+
+    color: white;
+
+    background: #334155;
+}
+
+
+/* =============================
+   COMPARAISON
+============================= */
+
+.comparaison {
+    display: grid;
+
+    grid-template-columns:
+        var(--col-size, max-content)
+        var(--col-size, max-content);
+
+    align-items: stretch;
+}
+
+
+/* =============================
+   LISTES
+============================= */
+
+.liste {
+    min-width: 0;
+
+    padding:
+        3px
+        9px
+        5px;
+}
+
+
+.liste.restaurant-4704 {
+    background: #fffaf5;
+
+    border-right:
+        1px solid #d8dde3;
+}
+
+
+.liste.restaurant-4503 {
+    background: #f7fbff;
+}
+
+
+/* =============================
+   PLATS
+============================= */
+
+.plat {
+    padding:
+        7px
+        1px;
+
+    text-align: center;
+
+    border-bottom:
+        1px solid
+        rgba(148, 163, 184, 0.28);
+}
+
+
+.plat:last-child {
+    border-bottom: none;
+}
+
+
+/* =============================
+   NOM DU PLAT
+============================= */
+
+.nom {
+    font-size: 13px;
+
+    line-height: 1.25;
+
+    text-align: center;
+
+    white-space: nowrap;
+}
+
+
+/* =============================
+   PRIX
+============================= */
+
+.prix {
+    margin-top: 2px;
+
+    text-align: center;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+
+/* =============================
+   COULEURS
+============================= */
+
+.restaurant-4704 .prix {
+    color: #b45309;
+}
+
+
+.restaurant-4503 .prix {
+    color: #1d4ed8;
+}
+
+
+/* =============================
+   AUCUN PLAT
+============================= */
+
+.aucun-plat {
+    padding: 12px;
+
+    text-align: center;
+
+    font-size: 12px;
+
+    color: #9ca3af;
+}
+
+
+/* =============================
+   CHARGEMENT
+============================= */
+
+#chargement {
+    padding: 25px;
+
+    text-align: center;
+
+    color: #64748b;
+}
+
+
+#chargement.erreur {
+    color: #b91c1c;
+
+    font-weight: bold;
+}
+
+
+/* =============================
+   MOBILE
+============================= */
+
+@media (max-width: 600px) {
+
+    body {
+        align-items: flex-start;
+
+        background: white;
+    }
+
+
+    .container {
+        width: 100%;
+        max-width: 100%;
+
+        margin: 0;
+
+        border-radius: 0;
+
+        box-shadow: none;
+    }
+
+
+    .page-header {
+        padding:
+            10px
+            5px
+            8px;
+    }
+
+
+    h1 {
+        font-size: 18px;
+    }
+
+
+    .date {
+        font-size: 11px;
+    }
+
+
+    .restaurants,
+    .comparaison {
+        width: 100%;
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+    }
+
+
+    .restaurant {
+        padding:
+            7px
+            4px;
+
+        font-size: 16px;
+    }
+
+
+    .categorie-titre {
+        padding:
+            6px
+            3px;
+
+        font-size: 11px;
+    }
+
+
+    .liste {
+        min-width: 0;
+
+        padding:
+            2px
+            6px
+            4px;
+    }
+
+
+    .plat {
+        padding:
+            6px
+            1px;
+
+        text-align: center;
+    }
+
+
+    .nom {
+        font-size: 12px;
+
+        text-align: center;
+
+        white-space: normal;
+
+        overflow-wrap: anywhere;
+    }
+
+
+    .prix {
+        margin-top: 2px;
+
+        text-align: center;
+
+        font-size: 11px;
+    }
+
+}
+.plat-vide {
+    min-height: 47px;
+}
