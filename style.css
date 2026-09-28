@@ -54,7 +54,7 @@ body {
 
 
 /* =============================
-   EN-TÊTE
+   HEADER
 ============================= */
 
 .page-header {
@@ -66,6 +66,7 @@ body {
     text-align: center;
 
     background: #1e293b;
+
     color: white;
 }
 
@@ -79,6 +80,8 @@ h1 {
 
 .date {
     margin-top: 4px;
+
+    min-height: 14px;
 
     font-size: 12px;
 
@@ -94,20 +97,24 @@ h1 {
     display: grid;
 
     grid-template-columns:
-        var(--col-size, max-content)
-        var(--col-size, max-content);
+        var(--col-size, 150px)
+        var(--col-size, 150px);
 }
 
 
 .restaurant {
     padding:
-        9px
+        8px
         5px;
 
     text-align: center;
 
-    font-size: 19px;
     font-weight: 800;
+}
+
+
+.numero-restaurant {
+    font-size: 19px;
 }
 
 
@@ -122,6 +129,27 @@ h1 {
     background: #edf6ff;
 
     color: #1d4ed8;
+}
+
+
+/* =============================
+   MENU INDISPONIBLE
+============================= */
+
+.statut-menu {
+    display: none;
+
+    margin-top: 3px;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    color: #b91c1c;
+}
+
+
+.statut-menu.visible {
+    display: block;
 }
 
 
@@ -158,44 +186,17 @@ h1 {
 
 
 /* =============================
-   COMPARAISON
+   LIGNES
 ============================= */
 
-.comparaison {
+.ligne-plat {
     display: grid;
 
     grid-template-columns:
-        var(--col-size, max-content)
-        var(--col-size, max-content);
+        var(--col-size, 150px)
+        var(--col-size, 150px);
 
     align-items: stretch;
-}
-
-
-/* =============================
-   LISTES
-============================= */
-
-.liste {
-    min-width: 0;
-
-    padding:
-        3px
-        9px
-        5px;
-}
-
-
-.liste.restaurant-4704 {
-    background: #fffaf5;
-
-    border-right:
-        1px solid #d8dde3;
-}
-
-
-.liste.restaurant-4503 {
-    background: #f7fbff;
 }
 
 
@@ -204,9 +205,11 @@ h1 {
 ============================= */
 
 .plat {
+    min-width: 0;
+
     padding:
         7px
-        1px;
+        9px;
 
     text-align: center;
 
@@ -216,13 +219,36 @@ h1 {
 }
 
 
-.plat:last-child {
+/*
+La cellule gauche garde toujours
+la séparation centrale.
+*/
+
+.plat.restaurant-4704 {
+    background: #fffaf5;
+
+    border-right:
+        1px solid #d8dde3;
+}
+
+
+.plat.restaurant-4503 {
+    background: #f7fbff;
+}
+
+
+/*
+Dernière ligne avant la catégorie
+suivante.
+*/
+
+.ligne-plat:last-child .plat {
     border-bottom: none;
 }
 
 
 /* =============================
-   NOM DU PLAT
+   NOM
 ============================= */
 
 .nom {
@@ -250,10 +276,6 @@ h1 {
 }
 
 
-/* =============================
-   COULEURS
-============================= */
-
 .restaurant-4704 .prix {
     color: #b45309;
 }
@@ -265,17 +287,27 @@ h1 {
 
 
 /* =============================
-   AUCUN PLAT
+   CASE VIDE
 ============================= */
 
-.aucun-plat {
-    padding: 12px;
+.plat-vide {
+    min-height: 47px;
+}
+
+
+/* =============================
+   MESSAGE GLOBAL
+============================= */
+
+.message-global {
+    padding: 30px 20px;
 
     text-align: center;
 
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: 600;
 
-    color: #9ca3af;
+    color: #64748b;
 }
 
 
@@ -343,7 +375,7 @@ h1 {
 
 
     .restaurants,
-    .comparaison {
+    .ligne-plat {
         width: 100%;
 
         grid-template-columns:
@@ -356,8 +388,16 @@ h1 {
         padding:
             7px
             4px;
+    }
 
+
+    .numero-restaurant {
         font-size: 16px;
+    }
+
+
+    .statut-menu {
+        font-size: 9px;
     }
 
 
@@ -370,29 +410,15 @@ h1 {
     }
 
 
-    .liste {
-        min-width: 0;
-
-        padding:
-            2px
-            6px
-            4px;
-    }
-
-
     .plat {
         padding:
             6px
-            1px;
-
-        text-align: center;
+            5px;
     }
 
 
     .nom {
         font-size: 12px;
-
-        text-align: center;
 
         white-space: normal;
 
@@ -403,12 +429,12 @@ h1 {
     .prix {
         margin-top: 2px;
 
-        text-align: center;
-
         font-size: 11px;
     }
 
-}
-.plat-vide {
-    min-height: 47px;
+
+    .plat-vide {
+        min-height: 43px;
+    }
+
 }

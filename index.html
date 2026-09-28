@@ -2,6 +2,7 @@
 <html lang="fr">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -11,13 +12,19 @@
 
     <title>Comparateur des menus</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
 </head>
 
 
 <body>
 
+
 <div class="container">
+
 
     <!-- =============================
          EN-TÊTE
@@ -25,7 +32,9 @@
 
     <header class="page-header">
 
-        <h1>Menus du jour</h1>
+        <h1>
+            Menus du jour
+        </h1>
 
         <div
             id="date"
@@ -35,21 +44,49 @@
     </header>
 
 
+
     <!-- =============================
          RESTAURANTS
     ============================== -->
 
     <div class="restaurants">
 
-        <div class="restaurant restaurant-4704">
-            4704
+
+        <div
+            class="restaurant restaurant-4704"
+        >
+
+            <div class="numero-restaurant">
+                4704 (en face)
+            </div>
+
+            <div
+                id="statut-4704"
+                class="statut-menu"
+            ></div>
+
         </div>
 
-        <div class="restaurant restaurant-4503">
-            4503
+
+
+        <div
+            class="restaurant restaurant-4503"
+        >
+
+            <div class="numero-restaurant">
+                4503 (DM)
+            </div>
+
+            <div
+                id="statut-4503"
+                class="statut-menu"
+            ></div>
+
         </div>
+
 
     </div>
+
 
 
     <!-- =============================
@@ -57,8 +94,11 @@
     ============================== -->
 
     <div id="chargement">
+
         Chargement des menus...
+
     </div>
+
 
 
     <!-- =============================
@@ -66,6 +106,7 @@
     ============================== -->
 
     <main id="menus"></main>
+
 
 </div>
 
@@ -75,12 +116,13 @@
 
     /*
     =====================================================
-    WORKER CLOUDFLARE
+    WORKER
     =====================================================
     */
 
     const API_URL =
         "https://gentle-unit-6457.clement-caron-butgeii.workers.dev";
+
 
 
     /*
@@ -109,16 +151,19 @@
     ];
 
 
+
     /*
     =====================================================
-    CHARGEMENT DES MENUS
+    CHARGEMENT
     =====================================================
     */
 
     async function chargerMenus() {
 
         const chargement =
-            document.querySelector("#chargement");
+            document.querySelector(
+                "#chargement"
+            );
 
 
         try {
@@ -140,21 +185,41 @@
                 await response.json();
 
 
+
+            /*
+            =============================
+            MENUS
+            =============================
+            */
+
             const menu4704 =
-                donnees["4704"];
+                donnees["4704"] ||
+                creerMenuIndisponible("4704");
 
 
             const menu4503 =
-                donnees["4503"];
+                donnees["4503"] ||
+                creerMenuIndisponible("4503");
 
 
-            if (!menu4704 || !menu4503) {
 
-                throw new Error(
-                    "Les menus n'ont pas été trouvés."
-                );
+            /*
+            =============================
+            STATUTS
+            =============================
+            */
 
-            }
+            afficherStatut(
+                "4704",
+                menu4704
+            );
+
+
+            afficherStatut(
+                "4503",
+                menu4503
+            );
+
 
 
             /*
@@ -163,16 +228,16 @@
             =============================
             */
 
-            document.querySelector("#date")
-                .textContent =
-                    menu4704.date ||
-                    menu4503.date ||
-                    "";
+            afficherDate(
+                menu4704,
+                menu4503
+            );
+
 
 
             /*
             =============================
-            AFFICHAGE
+            MENUS
             =============================
             */
 
@@ -182,13 +247,15 @@
             );
 
 
+
             /*
             =============================
-            LARGEUR AUTOMATIQUE
+            LARGEUR
             =============================
             */
 
             ajusterLargeurColonnes();
+
 
 
             /*
@@ -208,7 +275,7 @@
 
 
             chargement.textContent =
-                "Impossible de charger les menus.";
+                "Impossible de contacter le service des menus.";
 
 
             chargement.classList.add(
@@ -218,6 +285,122 @@
         }
 
     }
+
+
+
+    /*
+    =====================================================
+    MENU DE SECOURS
+    =====================================================
+    */
+
+    function creerMenuIndisponible(
+        restaurant
+    ) {
+
+        return {
+
+            restaurant: restaurant,
+
+            disponible: false,
+
+            message:
+                "Menu non disponible",
+
+            date: "",
+
+            entrees: [],
+            plats: [],
+            desserts: []
+
+        };
+
+    }
+
+
+
+    /*
+    =====================================================
+    STATUT DU RESTAURANT
+    =====================================================
+    */
+
+    function afficherStatut(
+        restaurant,
+        menu
+    ) {
+
+        const element =
+            document.querySelector(
+                `#statut-${restaurant}`
+            );
+
+
+        if (
+            menu.disponible === false
+        ) {
+
+            element.textContent =
+                menu.message ||
+                "Menu non disponible";
+
+
+            element.classList.add(
+                "visible"
+            );
+
+        }
+
+        else {
+
+            element.textContent =
+                "";
+
+
+            element.classList.remove(
+                "visible"
+            );
+
+        }
+
+    }
+
+
+
+    /*
+    =====================================================
+    DATE
+    =====================================================
+    */
+
+    function afficherDate(
+        menu4704,
+        menu4503
+    ) {
+
+        const date =
+            (
+                menu4704.disponible !== false
+                &&
+                menu4704.date
+            )
+
+            ? menu4704.date
+
+            : (
+                menu4503.disponible !== false
+                ? menu4503.date
+                : ""
+            );
+
+
+        document.querySelector(
+            "#date"
+        ).textContent =
+            date;
+
+    }
+
 
 
     /*
@@ -232,282 +415,45 @@
     ) {
 
         const zoneMenus =
-            document.querySelector("#menus");
-
-
-        zoneMenus.innerHTML = "";
-
-
-        categories.forEach(categorie => {
-
-
-            /*
-            -----------------------------
-            SECTION
-            -----------------------------
-            */
-
-            const section =
-                document.createElement("section");
-
-
-            section.className =
-                "categorie-section";
-
-
-            /*
-            -----------------------------
-            TITRE DE CATÉGORIE
-            -----------------------------
-            */
-
-            const titre =
-                document.createElement("h2");
-
-
-            titre.className =
-                "categorie-titre";
-
-
-            titre.textContent =
-                categorie.titre;
-
-
-            section.appendChild(
-                titre
+            document.querySelector(
+                "#menus"
             );
 
 
-            /*
-            -----------------------------
-            PLATS DES DEUX RESTAURANTS
-            -----------------------------
-            */
-
-            const plats4704 =
-                menu4704[categorie.cle] || [];
+        zoneMenus.innerHTML =
+            "";
 
 
-            const plats4503 =
-                menu4503[categorie.cle] || [];
 
+        /*
+        =============================
+        AUCUN MENU DISPONIBLE
+        =============================
+        */
 
-            /*
-            On prend le nombre maximum
-            de plats entre les deux restaurants.
+        if (
+            menu4704.disponible === false
+            &&
+            menu4503.disponible === false
+        ) {
 
-            Les deux côtés auront donc
-            exactement le même nombre de lignes.
-            */
-
-            const nombreLignes =
-                Math.max(
-                    plats4704.length,
-                    plats4503.length
+            const message =
+                document.createElement(
+                    "div"
                 );
 
 
-            /*
-            -----------------------------
-            COMPARAISON
-            -----------------------------
-            */
-
-            const comparaison =
-                document.createElement("div");
+            message.className =
+                "message-global";
 
 
-            comparaison.className =
-                "comparaison";
-
-
-            /*
-            4704
-            */
-
-            comparaison.appendChild(
-
-                creerListeRestaurant(
-                    plats4704,
-                    "4704",
-                    nombreLignes
-                )
-
-            );
-
-
-            /*
-            4503
-            */
-
-            comparaison.appendChild(
-
-                creerListeRestaurant(
-                    plats4503,
-                    "4503",
-                    nombreLignes
-                )
-
-            );
-
-
-            section.appendChild(
-                comparaison
-            );
+            message.textContent =
+                "Aucun menu n'est disponible pour le moment.";
 
 
             zoneMenus.appendChild(
-                section
+                message
             );
-
-        });
-
-    }
-
-
-    /*
-    =====================================================
-    CRÉATION D'UNE LISTE
-    =====================================================
-    */
-
-    function creerListeRestaurant(
-        plats,
-        restaurant,
-        nombreLignes
-    ) {
-
-        const liste =
-            document.createElement("div");
-
-
-        liste.className =
-            `liste restaurant-${restaurant}`;
-
-
-        /*
-        On crée toujours exactement
-        le même nombre de lignes
-        pour les deux restaurants.
-        */
-
-        for (
-            let i = 0;
-            i < nombreLignes;
-            i++
-        ) {
-
-
-            const element =
-                document.createElement("article");
-
-
-            element.className =
-                "plat";
-
-
-            /*
-            =============================
-            PLAT EXISTANT
-            =============================
-            */
-
-            if (plats[i]) {
-
-
-                const nom =
-                    document.createElement("div");
-
-
-                nom.className =
-                    "nom";
-
-
-                nom.textContent =
-                    plats[i].nom;
-
-
-
-                const prix =
-                    document.createElement("div");
-
-
-                prix.className =
-                    "prix";
-
-
-                prix.textContent =
-                    plats[i].prix || "";
-
-
-                element.appendChild(nom);
-
-                element.appendChild(prix);
-
-            }
-
-
-            /*
-            =============================
-            CASE VIDE
-            =============================
-
-            Aucun texte affiché.
-            La case existe uniquement
-            pour conserver les traits
-            horizontaux de séparation.
-            */
-
-            else {
-
-                element.classList.add(
-                    "plat-vide"
-                );
-
-            }
-
-
-            liste.appendChild(
-                element
-            );
-
-        }
-
-
-        return liste;
-
-    }
-
-
-    /*
-    =====================================================
-    LARGEUR AUTOMATIQUE DES COLONNES
-    =====================================================
-
-    On cherche le texte le plus large
-    de l'ensemble du menu.
-
-    Puis on applique exactement
-    la même largeur au 4704 et au 4503.
-
-    La séparation reste donc
-    toujours au centre.
-    =====================================================
-    */
-
-    function ajusterLargeurColonnes() {
-
-
-        /*
-        Sur téléphone :
-        le CSS gère directement
-        deux colonnes de 50 %.
-        */
-
-        if (window.innerWidth <= 600) {
-
-            document.documentElement.style
-                .removeProperty("--col-size");
 
 
             return;
@@ -515,74 +461,355 @@
         }
 
 
+
+        /*
+        =============================
+        CATÉGORIES
+        =============================
+        */
+
+        categories.forEach(
+            categorie => {
+
+
+                const plats4704 =
+                    menu4704.disponible === false
+
+                    ? []
+
+                    : (
+                        menu4704[categorie.cle]
+                        || []
+                    );
+
+
+                const plats4503 =
+                    menu4503.disponible === false
+
+                    ? []
+
+                    : (
+                        menu4503[categorie.cle]
+                        || []
+                    );
+
+
+
+                const nombreLignes =
+                    Math.max(
+                        plats4704.length,
+                        plats4503.length
+                    );
+
+
+
+                /*
+                Catégorie vide
+                des deux côtés.
+                */
+
+                if (
+                    nombreLignes === 0
+                ) {
+
+                    return;
+
+                }
+
+
+
+                const section =
+                    document.createElement(
+                        "section"
+                    );
+
+
+                section.className =
+                    "categorie-section";
+
+
+
+                /*
+                TITRE
+                */
+
+                const titre =
+                    document.createElement(
+                        "h2"
+                    );
+
+
+                titre.className =
+                    "categorie-titre";
+
+
+                titre.textContent =
+                    categorie.titre;
+
+
+                section.appendChild(
+                    titre
+                );
+
+
+
+                /*
+                LIGNES
+                */
+
+                const lignes =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                lignes.className =
+                    "lignes-plats";
+
+
+
+                for (
+                    let i = 0;
+                    i < nombreLignes;
+                    i++
+                ) {
+
+                    const ligne =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    ligne.className =
+                        "ligne-plat";
+
+
+
+                    ligne.appendChild(
+
+                        creerPlat(
+                            plats4704[i],
+                            "4704"
+                        )
+
+                    );
+
+
+
+                    ligne.appendChild(
+
+                        creerPlat(
+                            plats4503[i],
+                            "4503"
+                        )
+
+                    );
+
+
+                    lignes.appendChild(
+                        ligne
+                    );
+
+                }
+
+
+                section.appendChild(
+                    lignes
+                );
+
+
+                zoneMenus.appendChild(
+                    section
+                );
+
+            }
+        );
+
+    }
+
+
+
+    /*
+    =====================================================
+    CRÉATION D'UN PLAT
+    =====================================================
+    */
+
+    function creerPlat(
+        plat,
+        restaurant
+    ) {
+
+        const element =
+            document.createElement(
+                "article"
+            );
+
+
+        element.className =
+            `plat restaurant-${restaurant}`;
+
+
+
+        /*
+        CASE VIDE
+        */
+
+        if (!plat) {
+
+            element.classList.add(
+                "plat-vide"
+            );
+
+
+            return element;
+
+        }
+
+
+
+        /*
+        NOM
+        */
+
+        const nom =
+            document.createElement(
+                "div"
+            );
+
+
+        nom.className =
+            "nom";
+
+
+        nom.textContent =
+            plat.nom;
+
+
+
+        /*
+        PRIX
+        */
+
+        const prix =
+            document.createElement(
+                "div"
+            );
+
+
+        prix.className =
+            "prix";
+
+
+        prix.textContent =
+            plat.prix || "";
+
+
+
+        element.appendChild(nom);
+
+        element.appendChild(prix);
+
+
+        return element;
+
+    }
+
+
+
+    /*
+    =====================================================
+    LARGEUR AUTOMATIQUE
+    =====================================================
+    */
+
+    function ajusterLargeurColonnes() {
+
+
+        /*
+        MOBILE = 50 / 50
+        */
+
+        if (
+            window.innerWidth <= 600
+        ) {
+
+            document.documentElement
+                .style
+                .removeProperty(
+                    "--col-size"
+                );
+
+
+            return;
+
+        }
+
+
+
         let largeurMax =
             0;
 
 
-        /*
-        =============================
-        MESURE DES PLATS
-        =============================
-        */
 
-        document.querySelectorAll(".plat")
-            .forEach(plat => {
+        document.querySelectorAll(
+            ".plat:not(.plat-vide)"
+        )
+        .forEach(
+            plat => {
 
 
                 const nom =
-                    plat.querySelector(".nom");
+                    plat.querySelector(
+                        ".nom"
+                    );
 
 
                 const prix =
-                    plat.querySelector(".prix");
+                    plat.querySelector(
+                        ".prix"
+                    );
 
 
                 const largeurNom =
                     nom
-                        ? nom.scrollWidth
-                        : 0;
+                    ? nom.scrollWidth
+                    : 0;
 
 
                 const largeurPrix =
                     prix
-                        ? prix.scrollWidth
-                        : 0;
-
-
-                const largeur =
-                    Math.max(
-                        largeurNom,
-                        largeurPrix
-                    );
+                    ? prix.scrollWidth
+                    : 0;
 
 
                 largeurMax =
                     Math.max(
+
                         largeurMax,
-                        largeur
+
+                        largeurNom,
+
+                        largeurPrix
+
                     );
 
-            });
+            }
+        );
+
 
 
         /*
-        =============================
-        MARGE INTÉRIEURE
-        =============================
+        Si aucun menu n'est disponible,
+        on conserve une taille correcte.
         */
 
         const marge =
             28;
 
 
-        /*
-        =============================
-        LARGEUR MINIMALE
-        =============================
-        */
-
         const largeurMinimum =
-            120;
+            150;
 
 
         const largeurFinale =
@@ -595,16 +822,9 @@
             );
 
 
-        /*
-        =============================
-        APPLICATION
 
-        Même largeur à gauche
-        et à droite.
-        =============================
-        */
-
-        document.documentElement.style
+        document.documentElement
+            .style
             .setProperty(
 
                 "--col-size",
@@ -616,6 +836,7 @@
     }
 
 
+
     /*
     =====================================================
     REDIMENSIONNEMENT
@@ -623,9 +844,13 @@
     */
 
     window.addEventListener(
+
         "resize",
+
         ajusterLargeurColonnes
+
     );
+
 
 
     /*
