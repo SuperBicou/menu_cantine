@@ -2,7 +2,6 @@
 <html lang="fr">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -16,15 +15,12 @@
         rel="stylesheet"
         href="style.css"
     >
-
 </head>
 
 
 <body>
 
-
 <div class="container">
-
 
     <!-- =============================
          EN-TÊTE
@@ -32,143 +28,49 @@
 
     <header class="page-header">
 
-        <h1>
-            Menus du jour
-        </h1>
-
-
-        <!-- =============================
-             DATE CLIQUABLE
-        ============================== -->
+        <h1>Menus du jour</h1>
 
         <div
             id="date-selection"
             class="date-selection"
             title="Choisir une date"
         >
-
             <div
                 id="date-affichee"
                 class="date"
             ></div>
-
         </div>
 
     </header>
 
 
-
     <!-- =============================
-         RESTAURANTS
+         TABLEAU
     ============================== -->
 
-    <div class="restaurants">
+    <div class="table-scroll">
 
-
-        <!-- 4704 -->
-
-        <div class="restaurant restaurant-4704">
-
-            <div class="numero-restaurant">
-                4704 (en face)
-            </div>
-
+        <div
+            id="table-inner"
+            class="table-inner"
+        >
 
             <div
-                id="maj-4704"
-                class="mise-a-jour"
+                id="restaurants"
+                class="restaurants"
             ></div>
 
 
-            <div
-                id="moyennes-4704"
-                class="moyennes-prix"
-            >
-
-                <div
-                    id="moyenne-plats-4704"
-                    class="moyenne-prix"
-                ></div>
-
-
-                <div
-                    id="moyenne-desserts-4704"
-                    class="moyenne-prix"
-                ></div>
-
+            <div id="chargement">
+                Chargement des menus...
             </div>
 
 
-            <div
-                id="statut-4704"
-                class="statut-menu"
-            ></div>
-
-        </div>
-
-
-
-        <!-- 4503 -->
-
-        <div class="restaurant restaurant-4503">
-
-            <div class="numero-restaurant">
-                4503 (DM)
-            </div>
-
-
-            <div
-                id="maj-4503"
-                class="mise-a-jour"
-            ></div>
-
-
-            <div
-                id="moyennes-4503"
-                class="moyennes-prix"
-            >
-
-                <div
-                    id="moyenne-plats-4503"
-                    class="moyenne-prix"
-                ></div>
-
-
-                <div
-                    id="moyenne-desserts-4503"
-                    class="moyenne-prix"
-                ></div>
-
-            </div>
-
-
-            <div
-                id="statut-4503"
-                class="statut-menu"
-            ></div>
+            <main id="menus"></main>
 
         </div>
 
     </div>
-
-
-
-    <!-- =============================
-         CHARGEMENT
-    ============================== -->
-
-    <div id="chargement">
-        Chargement des menus...
-    </div>
-
-
-
-    <!-- =============================
-         MENUS
-    ============================== -->
-
-    <main id="menus"></main>
-
 
 </div>
 
@@ -190,7 +92,6 @@
             id="mois-precedent"
             class="bouton-mois"
             type="button"
-            aria-label="Mois précédent"
         >
             ‹
         </button>
@@ -206,7 +107,6 @@
             id="mois-suivant"
             class="bouton-mois"
             type="button"
-            aria-label="Mois suivant"
         >
             ›
         </button>
@@ -240,7 +140,7 @@
 
     /*
     =====================================================
-    WORKER CLOUDFLARE
+    CONFIGURATION
     =====================================================
     */
 
@@ -248,12 +148,18 @@
         "https://menu-cantine.clement-caron-butgeii.workers.dev";
 
 
+    const restaurantsInfo = {
 
-    /*
-    =====================================================
-    CATÉGORIES
-    =====================================================
-    */
+        "4704": {
+            nom: "4704 (en face)"
+        },
+
+        "4503": {
+            nom: "4503 (DM)"
+        }
+
+    };
+
 
     const categories = [
 
@@ -278,7 +184,7 @@
 
     /*
     =====================================================
-    DATE D'AUJOURD'HUI
+    DATE DU JOUR
     =====================================================
     */
 
@@ -315,7 +221,6 @@
     }
 
 
-
     const AUJOURD_HUI =
         dateAujourdHuiISO();
 
@@ -327,14 +232,18 @@
     let moisCalendrier;
 
 
+    let modeVersionsMultiples =
+        false;
+
+
 
     /*
     =====================================================
-    OUTILS DATE
+    OUTILS DE DATE
     =====================================================
     */
 
-    function dateISO(
+    function creerDateISO(
         annee,
         mois,
         jour
@@ -347,19 +256,13 @@
             +
             String(
                 mois + 1
-            ).padStart(
-                2,
-                "0"
-            )
+            ).padStart(2, "0")
             +
             "-"
             +
             String(
                 jour
-            ).padStart(
-                2,
-                "0"
-            )
+            ).padStart(2, "0")
         );
 
     }
@@ -390,12 +293,6 @@
 
 
 
-    /*
-    =====================================================
-    DATE VISIBLE
-    =====================================================
-    */
-
     function afficherDateSelectionnee(
         dateISO
     ) {
@@ -406,32 +303,19 @@
             );
 
 
-        const texte =
-            new Intl.DateTimeFormat(
-                "fr-FR",
-                {
-                    weekday:
-                        "long",
-
-                    day:
-                        "2-digit",
-
-                    month:
-                        "long",
-
-                    year:
-                        "numeric"
-                }
-            )
-            .format(
-                date
-            );
-
-
         document.querySelector(
             "#date-affichee"
         ).textContent =
-            texte;
+            new Intl.DateTimeFormat(
+                "fr-FR",
+                {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric"
+                }
+            )
+            .format(date);
 
     }
 
@@ -439,7 +323,7 @@
 
     /*
     =====================================================
-    CALENDRIER PERSONNALISÉ
+    CALENDRIER
     =====================================================
     */
 
@@ -451,16 +335,12 @@
 
 
         moisCalendrier =
-            new Date(
-                dateISOversDate(
-                    AUJOURD_HUI
-                )
+            dateISOversDate(
+                AUJOURD_HUI
             );
 
 
-        moisCalendrier.setDate(
-            1
-        );
+        moisCalendrier.setDate(1);
 
 
         const zoneDate =
@@ -474,23 +354,6 @@
                 "#calendrier"
             );
 
-
-        const precedent =
-            document.querySelector(
-                "#mois-precedent"
-            );
-
-
-        const suivant =
-            document.querySelector(
-                "#mois-suivant"
-            );
-
-
-
-        /*
-        OUVERTURE / FERMETURE
-        */
 
         zoneDate.addEventListener(
             "click",
@@ -519,12 +382,10 @@
         );
 
 
-
-        /*
-        MOIS PRÉCÉDENT
-        */
-
-        precedent.addEventListener(
+        document.querySelector(
+            "#mois-precedent"
+        )
+        .addEventListener(
             "click",
             function (event) {
 
@@ -542,24 +403,18 @@
         );
 
 
-
-        /*
-        MOIS SUIVANT
-        */
-
-        suivant.addEventListener(
+        document.querySelector(
+            "#mois-suivant"
+        )
+        .addEventListener(
             "click",
             function (event) {
 
                 event.stopPropagation();
 
 
-                if (
-                    this.disabled
-                ) {
-
+                if (this.disabled) {
                     return;
-
                 }
 
 
@@ -573,11 +428,6 @@
             }
         );
 
-
-
-        /*
-        CLIC EN DEHORS
-        */
 
         document.addEventListener(
             "click",
@@ -601,11 +451,6 @@
         );
 
 
-
-        /*
-        TOUCHE ÉCHAP
-        */
-
         document.addEventListener(
             "keydown",
             function (event) {
@@ -622,11 +467,6 @@
         );
 
 
-
-        /*
-        REPOSITIONNEMENT
-        */
-
         window.addEventListener(
             "resize",
             function () {
@@ -641,6 +481,9 @@
 
                 }
 
+
+                ajusterLargeurColonnes();
+
             }
         );
 
@@ -648,19 +491,7 @@
 
 
 
-    /*
-    =====================================================
-    OUVERTURE DU CALENDRIER
-    =====================================================
-    */
-
     function ouvrirCalendrier() {
-
-        const calendrier =
-            document.querySelector(
-                "#calendrier"
-            );
-
 
         moisCalendrier =
             dateISOversDate(
@@ -668,12 +499,16 @@
             );
 
 
-        moisCalendrier.setDate(
-            1
-        );
+        moisCalendrier.setDate(1);
 
 
         dessinerCalendrier();
+
+
+        const calendrier =
+            document.querySelector(
+                "#calendrier"
+            );
 
 
         calendrier.classList.add(
@@ -692,12 +527,6 @@
     }
 
 
-
-    /*
-    =====================================================
-    FERMETURE
-    =====================================================
-    */
 
     function fermerCalendrier() {
 
@@ -720,12 +549,6 @@
     }
 
 
-
-    /*
-    =====================================================
-    POSITION DU CALENDRIER
-    =====================================================
-    */
 
     function positionnerCalendrier() {
 
@@ -757,11 +580,6 @@
             largeur / 2;
 
 
-        /*
-        Empêche le calendrier
-        de sortir de l'écran.
-        */
-
         gauche =
             Math.max(
                 10,
@@ -787,12 +605,6 @@
 
 
 
-    /*
-    =====================================================
-    DESSIN DU CALENDRIER
-    =====================================================
-    */
-
     function dessinerCalendrier() {
 
         const zone =
@@ -813,8 +625,7 @@
             );
 
 
-        zone.innerHTML =
-            "";
+        zone.innerHTML = "";
 
 
         const annee =
@@ -825,38 +636,18 @@
             moisCalendrier.getMonth();
 
 
-
-        /*
-        TITRE :
-        octobre 2026
-        */
-
         titre.textContent =
             new Intl.DateTimeFormat(
                 "fr-FR",
                 {
-                    month:
-                        "long",
-
-                    year:
-                        "numeric"
+                    month: "long",
+                    year: "numeric"
                 }
             )
             .format(
                 moisCalendrier
             );
 
-
-
-        /*
-        PREMIER JOUR DU MOIS
-
-        JavaScript :
-        dimanche = 0
-
-        Nous voulons :
-        lundi = 0
-        */
 
         const premierJour =
             (
@@ -872,11 +663,6 @@
             7;
 
 
-
-        /*
-        NOMBRE DE JOURS
-        */
-
         const nombreJours =
             new Date(
                 annee,
@@ -884,11 +670,6 @@
                 0
             ).getDate();
 
-
-
-        /*
-        CASES VIDES AVANT LE 1er
-        */
 
         for (
             let i = 0;
@@ -913,11 +694,6 @@
         }
 
 
-
-        /*
-        JOURS DU MOIS
-        */
-
         for (
             let jour = 1;
             jour <= nombreJours;
@@ -925,7 +701,7 @@
         ) {
 
             const valeurDate =
-                dateISO(
+                creerDateISO(
                     annee,
                     mois,
                     jour
@@ -950,11 +726,6 @@
                 jour;
 
 
-
-            /*
-            WEEK-END
-            */
-
             const dateJour =
                 new Date(
                     annee,
@@ -963,14 +734,10 @@
                 );
 
 
-            const numeroJour =
-                dateJour.getDay();
-
-
             if (
-                numeroJour === 0
+                dateJour.getDay() === 0
                 ||
-                numeroJour === 6
+                dateJour.getDay() === 6
             ) {
 
                 bouton.classList.add(
@@ -980,14 +747,8 @@
             }
 
 
-
-            /*
-            DATE SÉLECTIONNÉE
-            */
-
             if (
-                valeurDate
-                ===
+                valeurDate ===
                 dateSelectionnee
             ) {
 
@@ -998,14 +759,8 @@
             }
 
 
-
-            /*
-            AUJOURD'HUI
-            */
-
             if (
-                valeurDate
-                ===
+                valeurDate ===
                 AUJOURD_HUI
             ) {
 
@@ -1016,14 +771,8 @@
             }
 
 
-
-            /*
-            FUTUR = DÉSACTIVÉ
-            */
-
             if (
-                valeurDate
-                >
+                valeurDate >
                 AUJOURD_HUI
             ) {
 
@@ -1038,10 +787,6 @@
             }
 
             else {
-
-                /*
-                DATE CLIQUABLE
-                */
 
                 bouton.addEventListener(
                     "click",
@@ -1079,13 +824,6 @@
         }
 
 
-
-        /*
-        BLOQUE LE MOIS SUIVANT
-        SI NOUS SOMMES DÉJÀ
-        SUR LE MOIS ACTUEL.
-        */
-
         const aujourdHui =
             dateISOversDate(
                 AUJOURD_HUI
@@ -1094,18 +832,15 @@
 
         suivant.disabled =
             (
-                annee
-                >
+                annee >
                 aujourdHui.getFullYear()
             )
             ||
             (
-                annee
-                ===
+                annee ===
                 aujourdHui.getFullYear()
                 &&
-                mois
-                >=
+                mois >=
                 aujourdHui.getMonth()
             );
 
@@ -1115,7 +850,7 @@
 
     /*
     =====================================================
-    CHARGEMENT DES MENUS
+    CHARGEMENT DES DONNÉES
     =====================================================
     */
 
@@ -1129,9 +864,15 @@
             );
 
 
-        const zoneMenus =
+        const menus =
             document.querySelector(
                 "#menus"
+            );
+
+
+        const restaurants =
+            document.querySelector(
+                "#restaurants"
             );
 
 
@@ -1154,9 +895,8 @@
                 : "Chargement des menus...";
 
 
-        zoneMenus.innerHTML =
-            "";
-
+        menus.innerHTML = "";
+        restaurants.innerHTML = "";
 
 
         try {
@@ -1166,11 +906,6 @@
                     API_URL
                 );
 
-
-            /*
-            Ancienne date :
-            D1 uniquement.
-            */
 
             if (
                 historiqueDemande
@@ -1194,9 +929,7 @@
                 );
 
 
-            if (
-                !response.ok
-            ) {
+            if (!response.ok) {
 
                 throw new Error(
                     `Erreur HTTP ${response.status}`
@@ -1211,77 +944,140 @@
 
 
             /*
-            PROTECTION CONTRE
-            L'AFFICHAGE DU MENU ACTUEL
-            POUR UNE ANCIENNE DATE.
+            =================================================
+            HISTORIQUE
+            =================================================
             */
 
             if (
                 historiqueDemande
-                &&
-                (
+            ) {
+
+                if (
                     donnees.historique !== true
                     ||
                     donnees.dateDemandee !== dateISO
-                )
-            ) {
+                    ||
+                    !donnees.versions
+                ) {
 
-                const menu4704 =
-                    creerMenuIndisponible(
-                        "4704"
+                    afficherComparaison(
+
+                        [
+                            creerMenuIndisponible(
+                                "4704",
+                                "Aucun menu enregistré"
+                            )
+                        ],
+
+                        [
+                            creerMenuIndisponible(
+                                "4503",
+                                "Aucun menu enregistré"
+                            )
+                        ]
+
                     );
 
 
-                const menu4503 =
-                    creerMenuIndisponible(
-                        "4503"
-                    );
+                    chargement.style.display =
+                        "none";
 
 
-                menu4704.message =
-                    "Aucun menu enregistré";
+                    return;
+
+                }
 
 
-                menu4503.message =
-                    "Aucun menu enregistré";
+                let versions4704 =
+                    Array.isArray(
+                        donnees.versions["4704"]
+                    )
+                        ? donnees.versions["4704"]
+                        : [];
 
 
-                afficherToutesLesDonnees(
-                    menu4704,
-                    menu4503
+                let versions4503 =
+                    Array.isArray(
+                        donnees.versions["4503"]
+                    )
+                        ? donnees.versions["4503"]
+                        : [];
+
+
+                if (
+                    versions4704.length === 0
+                ) {
+
+                    versions4704 = [
+
+                        creerMenuIndisponible(
+                            "4704",
+                            "Aucun menu enregistré"
+                        )
+
+                    ];
+
+                }
+
+
+                if (
+                    versions4503.length === 0
+                ) {
+
+                    versions4503 = [
+
+                        creerMenuIndisponible(
+                            "4503",
+                            "Aucun menu enregistré"
+                        )
+
+                    ];
+
+                }
+
+
+                afficherComparaison(
+                    versions4704,
+                    versions4503
                 );
-
-
-                chargement.style.display =
-                    "none";
-
-
-                return;
 
             }
 
 
 
-            const menu4704 =
-                donnees["4704"]
-                ||
-                creerMenuIndisponible(
-                    "4704"
+            /*
+            =================================================
+            MENU ACTUEL
+            =================================================
+            */
+
+            else {
+
+                const menu4704 =
+                    donnees["4704"]
+                    ||
+                    creerMenuIndisponible(
+                        "4704",
+                        "Menu non disponible"
+                    );
+
+
+                const menu4503 =
+                    donnees["4503"]
+                    ||
+                    creerMenuIndisponible(
+                        "4503",
+                        "Menu non disponible"
+                    );
+
+
+                afficherComparaison(
+                    [menu4704],
+                    [menu4503]
                 );
 
-
-            const menu4503 =
-                donnees["4503"]
-                ||
-                creerMenuIndisponible(
-                    "4503"
-                );
-
-
-            afficherToutesLesDonnees(
-                menu4704,
-                menu4503
-            );
+            }
 
 
             chargement.style.display =
@@ -1318,54 +1114,111 @@
     =====================================================
     */
 
-    function afficherToutesLesDonnees(
-        menu4704,
-        menu4503
+    function afficherComparaison(
+        versions4704,
+        versions4503
     ) {
 
-        afficherStatut(
-            "4704",
-            menu4704
+        modeVersionsMultiples =
+            versions4704.length > 1
+            ||
+            versions4503.length > 1;
+
+
+        const colonnes = [];
+
+
+        versions4704.forEach(
+            (
+                menu,
+                index
+            ) => {
+
+                colonnes.push({
+
+                    restaurant:
+                        "4704",
+
+                    menu:
+                        menu,
+
+                    nombreVersions:
+                        versions4704.length,
+
+                    numeroVersion:
+                        index + 1,
+
+                    finGroupe:
+                        index ===
+                        versions4704.length - 1
+
+                });
+
+            }
         );
 
 
-        afficherStatut(
-            "4503",
-            menu4503
+        versions4503.forEach(
+            (
+                menu,
+                index
+            ) => {
+
+                colonnes.push({
+
+                    restaurant:
+                        "4503",
+
+                    menu:
+                        menu,
+
+                    nombreVersions:
+                        versions4503.length,
+
+                    numeroVersion:
+                        index + 1,
+
+                    finGroupe:
+                        false
+
+                });
+
+            }
         );
 
 
-        afficherMiseAJour(
-            "4704",
-            menu4704
+        const tableInner =
+            document.querySelector(
+                "#table-inner"
+            );
+
+
+        tableInner.style.setProperty(
+            "--nb-cols",
+            colonnes.length
         );
 
 
-        afficherMiseAJour(
-            "4503",
-            menu4503
+        tableInner.classList.toggle(
+            "multiple",
+            modeVersionsMultiples
         );
 
 
-        afficherMoyennes(
-            "4704",
-            menu4704
-        );
-
-
-        afficherMoyennes(
-            "4503",
-            menu4503
+        afficherEntetes(
+            versions4704,
+            versions4503
         );
 
 
         afficherMenus(
-            menu4704,
-            menu4503
+            colonnes
         );
 
 
-        ajusterLargeurColonnes();
+        requestAnimationFrame(
+            ajusterLargeurColonnes
+        );
 
     }
 
@@ -1373,192 +1226,53 @@
 
     /*
     =====================================================
-    MENU INDISPONIBLE
+    EN-TÊTES
     =====================================================
     */
 
-    function creerMenuIndisponible(
-        restaurant
-    ) {
-
-        return {
-
-            restaurant:
-                restaurant,
-
-            disponible:
-                false,
-
-            message:
-                dateSelectionnee === AUJOURD_HUI
-                    ? "Menu non disponible"
-                    : "Aucun menu enregistré",
-
-            date:
-                "",
-
-            miseAJour:
-                "",
-
-            entrees:
-                [],
-
-            plats:
-                [],
-
-            desserts:
-                []
-
-        };
-
-    }
-
-
-
-    /*
-    =====================================================
-    STATUT
-    =====================================================
-    */
-
-    function afficherStatut(
-        restaurant,
-        menu
-    ) {
-
-        const element =
-            document.querySelector(
-                `#statut-${restaurant}`
-            );
-
-
-        if (
-            menu.disponible === false
-        ) {
-
-            element.textContent =
-                menu.message
-                ||
-                "Menu non disponible";
-
-
-            element.classList.add(
-                "visible"
-            );
-
-        }
-
-        else {
-
-            element.textContent =
-                "";
-
-
-            element.classList.remove(
-                "visible"
-            );
-
-        }
-
-    }
-
-
-
-    /*
-    =====================================================
-    MISE À JOUR
-    =====================================================
-    */
-
-    function afficherMiseAJour(
-        restaurant,
-        menu
-    ) {
-
-        const element =
-            document.querySelector(
-                `#maj-${restaurant}`
-            );
-
-
-        if (
-            menu.disponible !== false
-            &&
-            menu.miseAJour
-        ) {
-
-            const texte =
-                menu.miseAJour.replace(
-                    /^Dernière\s+mise\s+à\s+jour\s*:\s*/i,
-                    ""
-                );
-
-
-            element.textContent =
-                `Mis à jour : ${texte}`;
-
-
-            element.classList.add(
-                "visible"
-            );
-
-        }
-
-        else {
-
-            element.textContent =
-                "";
-
-
-            element.classList.remove(
-                "visible"
-            );
-
-        }
-
-    }
-
-
-
-    /*
-    =====================================================
-    MOYENNES
-    =====================================================
-    */
-
-    function afficherMoyennes(
-        restaurant,
-        menu
+    function afficherEntetes(
+        versions4704,
+        versions4503
     ) {
 
         const zone =
             document.querySelector(
-                `#moyennes-${restaurant}`
+                "#restaurants"
             );
 
 
-        const plats =
-            document.querySelector(
-                `#moyenne-plats-${restaurant}`
-            );
+        zone.innerHTML = "";
 
 
-        const desserts =
-            document.querySelector(
-                `#moyenne-desserts-${restaurant}`
-            );
+        /*
+        =================================================
+        UNE SEULE VERSION PAR CANTINE
 
+        Affichage strictement comme avant.
+        =================================================
+        */
 
         if (
-            menu.disponible === false
+            !modeVersionsMultiples
         ) {
 
-            plats.textContent = "";
-            desserts.textContent = "";
+            zone.className =
+                "restaurants mode-simple";
 
 
-            zone.classList.remove(
-                "visible"
+            zone.appendChild(
+                creerEnteteSimple(
+                    "4704",
+                    versions4704[0]
+                )
+            );
+
+
+            zone.appendChild(
+                creerEnteteSimple(
+                    "4503",
+                    versions4503[0]
+                )
             );
 
 
@@ -1567,201 +1281,157 @@
         }
 
 
-        const moyennePlats =
-            calculerPrixMoyen(
-                menu.plats || []
+
+        /*
+        =================================================
+        PLUSIEURS VERSIONS
+        =================================================
+        */
+
+        zone.className =
+            "restaurants mode-multiple";
+
+
+        const groupes =
+            document.createElement(
+                "div"
             );
 
 
-        const moyenneDesserts =
-            calculerPrixMoyen(
-                menu.desserts || []
+        groupes.className =
+            "groupes-restaurants";
+
+
+        const groupe4704 =
+            creerGroupeRestaurant(
+                "4704",
+                versions4704.length
             );
 
 
-        if (
-            moyennePlats !== null
-        ) {
-
-            plats.textContent =
-                `Plat moyen : ${formaterPrix(moyennePlats)}`;
-
-        }
-
-        else {
-
-            plats.textContent =
-                "";
-
-        }
-
-
-        if (
-            moyenneDesserts !== null
-        ) {
-
-            desserts.textContent =
-                `Dessert moyen : ${formaterPrix(moyenneDesserts)}`;
-
-        }
-
-        else {
-
-            desserts.textContent =
-                "";
-
-        }
-
-
-        if (
-            moyennePlats !== null
-            ||
-            moyenneDesserts !== null
-        ) {
-
-            zone.classList.add(
-                "visible"
-            );
-
-        }
-
-        else {
-
-            zone.classList.remove(
-                "visible"
-            );
-
-        }
-
-    }
-
-
-
-    /*
-    =====================================================
-    CALCUL MOYENNE
-    =====================================================
-    */
-
-    function calculerPrixMoyen(
-        elements
-    ) {
-
-        const prix =
-            elements
-
-                .map(
-                    element =>
-                        convertirPrix(
-                            element.prix
-                        )
-                )
-
-                .filter(
-                    valeur =>
-                        Number.isFinite(
-                            valeur
-                        )
-                );
-
-
-        if (
-            prix.length === 0
-        ) {
-
-            return null;
-
-        }
-
-
-        const total =
-            prix.reduce(
-                (
-                    somme,
-                    valeur
-                ) =>
-                    somme + valeur,
-                0
+        const groupe4503 =
+            creerGroupeRestaurant(
+                "4503",
+                versions4503.length
             );
 
 
-        return (
-            total / prix.length
+        groupes.appendChild(
+            groupe4704
         );
 
-    }
 
-
-
-    /*
-    =====================================================
-    CONVERSION PRIX
-    =====================================================
-    */
-
-    function convertirPrix(
-        prix
-    ) {
-
-        if (!prix) {
-            return NaN;
-        }
-
-
-        const resultat =
-            String(prix)
-
-                .replace(
-                    /\u00a0/g,
-                    " "
-                )
-
-                .match(
-                    /[0-9]+(?:[.,][0-9]+)?/
-                );
-
-
-        if (!resultat) {
-            return NaN;
-        }
-
-
-        return parseFloat(
-            resultat[0]
-                .replace(
-                    ",",
-                    "."
-                )
+        groupes.appendChild(
+            groupe4503
         );
 
-    }
+
+        zone.appendChild(
+            groupes
+        );
 
 
 
-    /*
-    =====================================================
-    FORMAT PRIX
-    =====================================================
-    */
+        const versions =
+            document.createElement(
+                "div"
+            );
 
-    function formaterPrix(
-        prix
-    ) {
 
-        return new Intl.NumberFormat(
-            "fr-FR",
-            {
-                minimumFractionDigits:
-                    2,
+        versions.className =
+            "versions-entetes";
 
-                maximumFractionDigits:
-                    2
+
+        versions4704.forEach(
+            (
+                menu,
+                index
+            ) => {
+
+                const entete =
+                    creerEnteteVersion(
+                        "4704",
+                        menu,
+                        index + 1,
+                        versions4704.length
+                    );
+
+
+                if (
+                    index ===
+                    versions4704.length - 1
+                ) {
+
+                    entete.classList.add(
+                        "fin-groupe"
+                    );
+
+                }
+
+
+                versions.appendChild(
+                    entete
+                );
+
             }
-        ).format(
-            prix
-        )
-        +
-        " €";
+        );
+
+
+        versions4503.forEach(
+            (
+                menu,
+                index
+            ) => {
+
+                versions.appendChild(
+
+                    creerEnteteVersion(
+                        "4503",
+                        menu,
+                        index + 1,
+                        versions4503.length
+                    )
+
+                );
+
+            }
+        );
+
+
+        zone.appendChild(
+            versions
+        );
+
+    }
+
+
+
+    function creerGroupeRestaurant(
+        restaurant,
+        nombreColonnes
+    ) {
+
+        const element =
+            document.createElement(
+                "div"
+            );
+
+
+        element.className =
+            `groupe-restaurant restaurant-${restaurant}`;
+
+
+        element.style.gridColumn =
+            `span ${nombreColonnes}`;
+
+
+        element.textContent =
+            restaurantsInfo[
+                restaurant
+            ].nom;
+
+
+        return element;
 
     }
 
@@ -1769,13 +1439,340 @@
 
     /*
     =====================================================
-    AFFICHAGE MENUS
+    EN-TÊTE SIMPLE
+    =====================================================
+    */
+
+    function creerEnteteSimple(
+        restaurant,
+        menu
+    ) {
+
+        const element =
+            document.createElement(
+                "div"
+            );
+
+
+        element.className =
+            `restaurant restaurant-${restaurant}`;
+
+
+        const nom =
+            document.createElement(
+                "div"
+            );
+
+
+        nom.className =
+            "numero-restaurant";
+
+
+        nom.textContent =
+            restaurantsInfo[
+                restaurant
+            ].nom;
+
+
+        element.appendChild(
+            nom
+        );
+
+
+        ajouterInformationsVersion(
+            element,
+            menu,
+            false
+        );
+
+
+        return element;
+
+    }
+
+
+
+    /*
+    =====================================================
+    EN-TÊTE VERSION
+    =====================================================
+    */
+
+    function creerEnteteVersion(
+        restaurant,
+        menu,
+        numeroVersion,
+        nombreVersions
+    ) {
+
+        const element =
+            document.createElement(
+                "div"
+            );
+
+
+        element.className =
+            `version-entete restaurant-${restaurant}`;
+
+
+        const heure =
+            extraireHeureMiseAJour(
+                menu
+            );
+
+
+        const titre =
+            document.createElement(
+                "div"
+            );
+
+
+        titre.className =
+            "heure-version";
+
+
+        if (heure) {
+
+            titre.textContent =
+                `Mis à jour : ${heure}`;
+
+        }
+
+        else {
+
+            titre.textContent =
+                nombreVersions > 1
+                    ? `Version ${numeroVersion}`
+                    : "Menu";
+
+        }
+
+
+        element.appendChild(
+            titre
+        );
+
+
+        ajouterInformationsVersion(
+            element,
+            menu,
+            true
+        );
+
+
+        return element;
+
+    }
+
+
+
+    /*
+    =====================================================
+    INFORMATIONS D'UNE VERSION
+    =====================================================
+    */
+
+    function ajouterInformationsVersion(
+        element,
+        menu,
+        versionMultiple
+    ) {
+
+        if (
+            !versionMultiple
+            &&
+            menu.disponible !== false
+            &&
+            menu.miseAJour
+        ) {
+
+            const miseAJour =
+                document.createElement(
+                    "div"
+                );
+
+
+            miseAJour.className =
+                "mise-a-jour visible";
+
+
+            miseAJour.textContent =
+                `Mis à jour : ${extraireHeureMiseAJour(menu) || menu.miseAJour}`;
+
+
+            element.appendChild(
+                miseAJour
+            );
+
+        }
+
+
+
+        if (
+            menu.disponible !== false
+        ) {
+
+            const moyennePlats =
+                calculerPrixMoyen(
+                    menu.plats || []
+                );
+
+
+            const moyenneDesserts =
+                calculerPrixMoyen(
+                    menu.desserts || []
+                );
+
+
+            if (
+                moyennePlats !== null
+                ||
+                moyenneDesserts !== null
+            ) {
+
+                const moyennes =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                moyennes.className =
+                    "moyennes-prix visible";
+
+
+                if (
+                    moyennePlats !== null
+                ) {
+
+                    const ligne =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    ligne.className =
+                        "moyenne-prix";
+
+
+                    ligne.textContent =
+                        `Plat moyen : ${formaterPrix(moyennePlats)}`;
+
+
+                    moyennes.appendChild(
+                        ligne
+                    );
+
+                }
+
+
+                if (
+                    moyenneDesserts !== null
+                ) {
+
+                    const ligne =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    ligne.className =
+                        "moyenne-prix";
+
+
+                    ligne.textContent =
+                        `Dessert moyen : ${formaterPrix(moyenneDesserts)}`;
+
+
+                    moyennes.appendChild(
+                        ligne
+                    );
+
+                }
+
+
+                element.appendChild(
+                    moyennes
+                );
+
+            }
+
+        }
+
+
+
+        /*
+        Ancien menu sauvegardé à 13h.
+        */
+
+        if (
+            menu.sauvegardeForcee === true
+            &&
+            menu.dateSourceISO
+            &&
+            menu.dateSourceISO !==
+            dateSelectionnee
+        ) {
+
+            const source =
+                document.createElement(
+                    "div"
+                );
+
+
+            source.className =
+                "date-source";
+
+
+            source.textContent =
+                `Menu daté du ${formaterDateCourte(menu.dateSourceISO)}`;
+
+
+            element.appendChild(
+                source
+            );
+
+        }
+
+
+
+        if (
+            menu.disponible === false
+        ) {
+
+            const statut =
+                document.createElement(
+                    "div"
+                );
+
+
+            statut.className =
+                "statut-menu visible";
+
+
+            statut.textContent =
+                menu.message
+                ||
+                "Menu non disponible";
+
+
+            element.appendChild(
+                statut
+            );
+
+        }
+
+    }
+
+
+
+    /*
+    =====================================================
+    MENUS
     =====================================================
     */
 
     function afficherMenus(
-        menu4704,
-        menu4503
+        colonnes
     ) {
 
         const zoneMenus =
@@ -1784,14 +1781,18 @@
             );
 
 
-        zoneMenus.innerHTML =
-            "";
+        zoneMenus.innerHTML = "";
+
+
+        const auMoinsUnMenu =
+            colonnes.some(
+                colonne =>
+                    colonne.menu.disponible === true
+            );
 
 
         if (
-            menu4704.disponible === false
-            &&
-            menu4503.disponible === false
+            !auMoinsUnMenu
         ) {
 
             const message =
@@ -1820,45 +1821,50 @@
         }
 
 
+
         categories.forEach(
             categorie => {
 
+                const listes =
+                    colonnes.map(
+                        colonne => {
 
-                const plats4704 =
-                    menu4704.disponible === false
-                        ? []
-                        : (
-                            menu4704[
-                                categorie.cle
-                            ]
-                            ||
-                            []
-                        );
+                            if (
+                                colonne.menu.disponible === false
+                            ) {
+
+                                return [];
+
+                            }
 
 
-                const plats4503 =
-                    menu4503.disponible === false
-                        ? []
-                        : (
-                            menu4503[
-                                categorie.cle
-                            ]
-                            ||
-                            []
-                        );
+                            return (
+                                colonne.menu[
+                                    categorie.cle
+                                ]
+                                ||
+                                []
+                            );
+
+                        }
+                    );
 
 
                 const nombreLignes =
                     Math.max(
-                        plats4704.length,
-                        plats4503.length
+                        ...listes.map(
+                            liste =>
+                                liste.length
+                        )
                     );
 
 
                 if (
                     nombreLignes === 0
                 ) {
+
                     return;
+
                 }
 
 
@@ -1891,16 +1897,6 @@
                 );
 
 
-                const lignes =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                lignes.className =
-                    "lignes-plats";
-
-
                 for (
                     let i = 0;
                     i < nombreLignes;
@@ -1917,32 +1913,51 @@
                         "ligne-plat";
 
 
-                    ligne.appendChild(
-                        creerPlat(
-                            plats4704[i],
-                            "4704"
-                        )
+                    colonnes.forEach(
+                        (
+                            colonne,
+                            index
+                        ) => {
+
+                            const plat =
+                                listes[
+                                    index
+                                ][i];
+
+
+                            const cellule =
+                                creerPlat(
+                                    plat,
+                                    colonne.restaurant
+                                );
+
+
+                            if (
+                                colonne.finGroupe
+                                &&
+                                modeVersionsMultiples
+                            ) {
+
+                                cellule.classList.add(
+                                    "fin-groupe"
+                                );
+
+                            }
+
+
+                            ligne.appendChild(
+                                cellule
+                            );
+
+                        }
                     );
 
 
-                    ligne.appendChild(
-                        creerPlat(
-                            plats4503[i],
-                            "4503"
-                        )
-                    );
-
-
-                    lignes.appendChild(
+                    section.appendChild(
                         ligne
                     );
 
                 }
-
-
-                section.appendChild(
-                    lignes
-                );
 
 
                 zoneMenus.appendChild(
@@ -1955,12 +1970,6 @@
     }
 
 
-
-    /*
-    =====================================================
-    PLAT
-    =====================================================
-    */
 
     function creerPlat(
         plat,
@@ -2035,21 +2044,240 @@
 
     /*
     =====================================================
-    LARGEUR AUTOMATIQUE
+    PRIX
+    =====================================================
+    */
+
+    function calculerPrixMoyen(
+        elements
+    ) {
+
+        const prix =
+            elements
+
+                .map(
+                    element =>
+                        convertirPrix(
+                            element.prix
+                        )
+                )
+
+                .filter(
+                    valeur =>
+                        Number.isFinite(
+                            valeur
+                        )
+                );
+
+
+        if (
+            prix.length === 0
+        ) {
+
+            return null;
+
+        }
+
+
+        const total =
+            prix.reduce(
+                (
+                    somme,
+                    valeur
+                ) =>
+                    somme + valeur,
+                0
+            );
+
+
+        return (
+            total /
+            prix.length
+        );
+
+    }
+
+
+
+    function convertirPrix(
+        prix
+    ) {
+
+        if (!prix) {
+            return NaN;
+        }
+
+
+        const resultat =
+            String(prix)
+                .replace(
+                    /\u00a0/g,
+                    " "
+                )
+                .match(
+                    /[0-9]+(?:[.,][0-9]+)?/
+                );
+
+
+        if (!resultat) {
+            return NaN;
+        }
+
+
+        return parseFloat(
+            resultat[0]
+                .replace(
+                    ",",
+                    "."
+                )
+        );
+
+    }
+
+
+
+    function formaterPrix(
+        prix
+    ) {
+
+        return new Intl.NumberFormat(
+            "fr-FR",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        ).format(prix)
+        +
+        " €";
+
+    }
+
+
+
+    /*
+    =====================================================
+    AUTRES OUTILS
+    =====================================================
+    */
+
+    function extraireHeureMiseAJour(
+        menu
+    ) {
+
+        if (
+            !menu
+            ||
+            !menu.miseAJour
+        ) {
+
+            return "";
+
+        }
+
+
+        const resultat =
+            String(
+                menu.miseAJour
+            )
+            .match(
+                /([0-2]?\d:[0-5]\d)/
+            );
+
+
+        return resultat
+            ? resultat[1]
+            : "";
+
+    }
+
+
+
+    function formaterDateCourte(
+        dateISO
+    ) {
+
+        const [
+            annee,
+            mois,
+            jour
+        ] =
+            dateISO
+                .split("-");
+
+
+        return (
+            `${jour}/${mois}/${annee}`
+        );
+
+    }
+
+
+
+    function creerMenuIndisponible(
+        restaurant,
+        message
+    ) {
+
+        return {
+
+            restaurant:
+                restaurant,
+
+            disponible:
+                false,
+
+            message:
+                message,
+
+            date:
+                "",
+
+            miseAJour:
+                "",
+
+            entrees:
+                [],
+
+            plats:
+                [],
+
+            desserts:
+                []
+
+        };
+
+    }
+
+
+
+    /*
+    =====================================================
+    LARGEUR DES COLONNES
     =====================================================
     */
 
     function ajusterLargeurColonnes() {
 
+        const tableInner =
+            document.querySelector(
+                "#table-inner"
+            );
+
+
+        /*
+        Deux colonnes classiques sur mobile :
+        50 / 50 comme avant.
+        */
+
         if (
             window.innerWidth <= 600
+            &&
+            !modeVersionsMultiples
         ) {
 
-            document.documentElement
-                .style
-                .removeProperty(
-                    "--col-size"
-                );
+            tableInner.style.removeProperty(
+                "--col-size"
+            );
 
 
             return;
@@ -2059,6 +2287,7 @@
 
         let largeurMax =
             0;
+
 
 
         function mesurerTexte(
@@ -2120,18 +2349,13 @@
                 style.fontFamily;
 
 
-            mesure.style.letterSpacing =
-                style.letterSpacing;
-
-
             document.body.appendChild(
                 mesure
             );
 
 
             const largeur =
-                mesure
-                    .getBoundingClientRect()
+                mesure.getBoundingClientRect()
                     .width;
 
 
@@ -2143,8 +2367,9 @@
         }
 
 
+
         document.querySelectorAll(
-            ".nom, .prix"
+            ".nom, .prix, .numero-restaurant, .mise-a-jour, .moyenne-prix, .heure-version"
         )
         .forEach(
             element => {
@@ -2161,25 +2386,7 @@
         );
 
 
-        document.querySelectorAll(
-            ".numero-restaurant, .mise-a-jour, .moyenne-prix"
-        )
-        .forEach(
-            element => {
-
-                largeurMax =
-                    Math.max(
-                        largeurMax,
-                        mesurerTexte(
-                            element
-                        )
-                    );
-
-            }
-        );
-
-
-        const largeurFinale =
+        let largeurFinale =
             Math.max(
                 Math.ceil(
                     largeurMax
@@ -2190,21 +2397,36 @@
             );
 
 
-        document.documentElement
-            .style
-            .setProperty(
-                "--col-size",
-                `${largeurFinale}px`
-            );
+        /*
+        Avec plusieurs versions sur téléphone,
+        on limite la taille des colonnes et
+        on permet le défilement horizontal.
+        */
+
+        if (
+            window.innerWidth <= 600
+            &&
+            modeVersionsMultiples
+        ) {
+
+            largeurFinale =
+                Math.max(
+                    165,
+                    Math.min(
+                        largeurFinale,
+                        220
+                    )
+                );
+
+        }
+
+
+        tableInner.style.setProperty(
+            "--col-size",
+            `${largeurFinale}px`
+        );
 
     }
-
-
-
-    window.addEventListener(
-        "resize",
-        ajusterLargeurColonnes
-    );
 
 
 
@@ -2222,7 +2444,6 @@
     );
 
 </script>
-
 
 </body>
 
