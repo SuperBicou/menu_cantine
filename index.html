@@ -36,10 +36,23 @@
             Menus du jour
         </h1>
 
+
+        <!-- =============================
+             DATE CLIQUABLE
+        ============================== -->
+
         <div
-            id="date"
-            class="date"
-        ></div>
+            id="date-selection"
+            class="date-selection"
+            title="Choisir une date"
+        >
+
+            <div
+                id="date-affichee"
+                class="date"
+            ></div>
+
+        </div>
 
     </header>
 
@@ -52,13 +65,39 @@
     <div class="restaurants">
 
 
-        <div
-            class="restaurant restaurant-4704"
-        >
+        <!-- 4704 -->
+
+        <div class="restaurant restaurant-4704">
 
             <div class="numero-restaurant">
                 4704 (en face)
             </div>
+
+
+            <div
+                id="maj-4704"
+                class="mise-a-jour"
+            ></div>
+
+
+            <div
+                id="moyennes-4704"
+                class="moyennes-prix"
+            >
+
+                <div
+                    id="moyenne-plats-4704"
+                    class="moyenne-prix"
+                ></div>
+
+
+                <div
+                    id="moyenne-desserts-4704"
+                    class="moyenne-prix"
+                ></div>
+
+            </div>
+
 
             <div
                 id="statut-4704"
@@ -69,13 +108,39 @@
 
 
 
-        <div
-            class="restaurant restaurant-4503"
-        >
+        <!-- 4503 -->
+
+        <div class="restaurant restaurant-4503">
 
             <div class="numero-restaurant">
                 4503 (DM)
             </div>
+
+
+            <div
+                id="maj-4503"
+                class="mise-a-jour"
+            ></div>
+
+
+            <div
+                id="moyennes-4503"
+                class="moyennes-prix"
+            >
+
+                <div
+                    id="moyenne-plats-4503"
+                    class="moyenne-prix"
+                ></div>
+
+
+                <div
+                    id="moyenne-desserts-4503"
+                    class="moyenne-prix"
+                ></div>
+
+            </div>
+
 
             <div
                 id="statut-4503"
@@ -83,7 +148,6 @@
             ></div>
 
         </div>
-
 
     </div>
 
@@ -94,9 +158,7 @@
     ============================== -->
 
     <div id="chargement">
-
         Chargement des menus...
-
     </div>
 
 
@@ -112,16 +174,78 @@
 
 
 
+<!-- =============================
+     CALENDRIER PERSONNALISÉ
+============================== -->
+
+<div
+    id="calendrier"
+    class="calendrier"
+    aria-hidden="true"
+>
+
+    <div class="calendrier-entete">
+
+        <button
+            id="mois-precedent"
+            class="bouton-mois"
+            type="button"
+            aria-label="Mois précédent"
+        >
+            ‹
+        </button>
+
+
+        <div
+            id="titre-mois"
+            class="titre-mois"
+        ></div>
+
+
+        <button
+            id="mois-suivant"
+            class="bouton-mois"
+            type="button"
+            aria-label="Mois suivant"
+        >
+            ›
+        </button>
+
+    </div>
+
+
+    <div class="jours-semaine">
+
+        <div>lun.</div>
+        <div>mar.</div>
+        <div>mer.</div>
+        <div>jeu.</div>
+        <div>ven.</div>
+        <div class="weekend">sam.</div>
+        <div class="weekend">dim.</div>
+
+    </div>
+
+
+    <div
+        id="jours-calendrier"
+        class="jours-calendrier"
+    ></div>
+
+</div>
+
+
+
 <script>
 
     /*
     =====================================================
-    WORKER
+    WORKER CLOUDFLARE
     =====================================================
     */
 
     const API_URL =
-        "https://gentle-unit-6457.clement-caron-butgeii.workers.dev";
+        "https://menu-cantine.clement-caron-butgeii.workers.dev";
 
 
 
@@ -154,11 +278,850 @@
 
     /*
     =====================================================
-    CHARGEMENT
+    DATE D'AUJOURD'HUI
     =====================================================
     */
 
-    async function chargerMenus() {
+    function dateAujourdHuiISO() {
+
+        const maintenant =
+            new Date();
+
+
+        const annee =
+            maintenant.getFullYear();
+
+
+        const mois =
+            String(
+                maintenant.getMonth() + 1
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        const jour =
+            String(
+                maintenant.getDate()
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        return `${annee}-${mois}-${jour}`;
+
+    }
+
+
+
+    const AUJOURD_HUI =
+        dateAujourdHuiISO();
+
+
+    let dateSelectionnee =
+        AUJOURD_HUI;
+
+
+    let moisCalendrier;
+
+
+
+    /*
+    =====================================================
+    OUTILS DATE
+    =====================================================
+    */
+
+    function dateISO(
+        annee,
+        mois,
+        jour
+    ) {
+
+        return (
+            annee
+            +
+            "-"
+            +
+            String(
+                mois + 1
+            ).padStart(
+                2,
+                "0"
+            )
+            +
+            "-"
+            +
+            String(
+                jour
+            ).padStart(
+                2,
+                "0"
+            )
+        );
+
+    }
+
+
+
+    function dateISOversDate(
+        valeur
+    ) {
+
+        const [
+            annee,
+            mois,
+            jour
+        ] =
+            valeur
+                .split("-")
+                .map(Number);
+
+
+        return new Date(
+            annee,
+            mois - 1,
+            jour
+        );
+
+    }
+
+
+
+    /*
+    =====================================================
+    DATE VISIBLE
+    =====================================================
+    */
+
+    function afficherDateSelectionnee(
+        dateISO
+    ) {
+
+        const date =
+            dateISOversDate(
+                dateISO
+            );
+
+
+        const texte =
+            new Intl.DateTimeFormat(
+                "fr-FR",
+                {
+                    weekday:
+                        "long",
+
+                    day:
+                        "2-digit",
+
+                    month:
+                        "long",
+
+                    year:
+                        "numeric"
+                }
+            )
+            .format(
+                date
+            );
+
+
+        document.querySelector(
+            "#date-affichee"
+        ).textContent =
+            texte;
+
+    }
+
+
+
+    /*
+    =====================================================
+    CALENDRIER PERSONNALISÉ
+    =====================================================
+    */
+
+    function initialiserCalendrier() {
+
+        afficherDateSelectionnee(
+            AUJOURD_HUI
+        );
+
+
+        moisCalendrier =
+            new Date(
+                dateISOversDate(
+                    AUJOURD_HUI
+                )
+            );
+
+
+        moisCalendrier.setDate(
+            1
+        );
+
+
+        const zoneDate =
+            document.querySelector(
+                "#date-selection"
+            );
+
+
+        const calendrier =
+            document.querySelector(
+                "#calendrier"
+            );
+
+
+        const precedent =
+            document.querySelector(
+                "#mois-precedent"
+            );
+
+
+        const suivant =
+            document.querySelector(
+                "#mois-suivant"
+            );
+
+
+
+        /*
+        OUVERTURE / FERMETURE
+        */
+
+        zoneDate.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+
+                if (
+                    calendrier.classList.contains(
+                        "ouvert"
+                    )
+                ) {
+
+                    fermerCalendrier();
+
+                }
+
+                else {
+
+                    ouvrirCalendrier();
+
+                }
+
+            }
+        );
+
+
+
+        /*
+        MOIS PRÉCÉDENT
+        */
+
+        precedent.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+
+                moisCalendrier.setMonth(
+                    moisCalendrier.getMonth() - 1
+                );
+
+
+                dessinerCalendrier();
+
+            }
+        );
+
+
+
+        /*
+        MOIS SUIVANT
+        */
+
+        suivant.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+
+                if (
+                    this.disabled
+                ) {
+
+                    return;
+
+                }
+
+
+                moisCalendrier.setMonth(
+                    moisCalendrier.getMonth() + 1
+                );
+
+
+                dessinerCalendrier();
+
+            }
+        );
+
+
+
+        /*
+        CLIC EN DEHORS
+        */
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    !calendrier.contains(
+                        event.target
+                    )
+                    &&
+                    !zoneDate.contains(
+                        event.target
+                    )
+                ) {
+
+                    fermerCalendrier();
+
+                }
+
+            }
+        );
+
+
+
+        /*
+        TOUCHE ÉCHAP
+        */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    fermerCalendrier();
+
+                }
+
+            }
+        );
+
+
+
+        /*
+        REPOSITIONNEMENT
+        */
+
+        window.addEventListener(
+            "resize",
+            function () {
+
+                if (
+                    calendrier.classList.contains(
+                        "ouvert"
+                    )
+                ) {
+
+                    positionnerCalendrier();
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /*
+    =====================================================
+    OUVERTURE DU CALENDRIER
+    =====================================================
+    */
+
+    function ouvrirCalendrier() {
+
+        const calendrier =
+            document.querySelector(
+                "#calendrier"
+            );
+
+
+        moisCalendrier =
+            dateISOversDate(
+                dateSelectionnee
+            );
+
+
+        moisCalendrier.setDate(
+            1
+        );
+
+
+        dessinerCalendrier();
+
+
+        calendrier.classList.add(
+            "ouvert"
+        );
+
+
+        calendrier.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        positionnerCalendrier();
+
+    }
+
+
+
+    /*
+    =====================================================
+    FERMETURE
+    =====================================================
+    */
+
+    function fermerCalendrier() {
+
+        const calendrier =
+            document.querySelector(
+                "#calendrier"
+            );
+
+
+        calendrier.classList.remove(
+            "ouvert"
+        );
+
+
+        calendrier.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+
+
+    /*
+    =====================================================
+    POSITION DU CALENDRIER
+    =====================================================
+    */
+
+    function positionnerCalendrier() {
+
+        const zoneDate =
+            document.querySelector(
+                "#date-selection"
+            );
+
+
+        const calendrier =
+            document.querySelector(
+                "#calendrier"
+            );
+
+
+        const rect =
+            zoneDate.getBoundingClientRect();
+
+
+        const largeur =
+            calendrier.offsetWidth;
+
+
+        let gauche =
+            rect.left
+            +
+            rect.width / 2
+            -
+            largeur / 2;
+
+
+        /*
+        Empêche le calendrier
+        de sortir de l'écran.
+        */
+
+        gauche =
+            Math.max(
+                10,
+                Math.min(
+                    gauche,
+                    window.innerWidth
+                    -
+                    largeur
+                    -
+                    10
+                )
+            );
+
+
+        calendrier.style.left =
+            `${gauche}px`;
+
+
+        calendrier.style.top =
+            `${rect.bottom + 8}px`;
+
+    }
+
+
+
+    /*
+    =====================================================
+    DESSIN DU CALENDRIER
+    =====================================================
+    */
+
+    function dessinerCalendrier() {
+
+        const zone =
+            document.querySelector(
+                "#jours-calendrier"
+            );
+
+
+        const titre =
+            document.querySelector(
+                "#titre-mois"
+            );
+
+
+        const suivant =
+            document.querySelector(
+                "#mois-suivant"
+            );
+
+
+        zone.innerHTML =
+            "";
+
+
+        const annee =
+            moisCalendrier.getFullYear();
+
+
+        const mois =
+            moisCalendrier.getMonth();
+
+
+
+        /*
+        TITRE :
+        octobre 2026
+        */
+
+        titre.textContent =
+            new Intl.DateTimeFormat(
+                "fr-FR",
+                {
+                    month:
+                        "long",
+
+                    year:
+                        "numeric"
+                }
+            )
+            .format(
+                moisCalendrier
+            );
+
+
+
+        /*
+        PREMIER JOUR DU MOIS
+
+        JavaScript :
+        dimanche = 0
+
+        Nous voulons :
+        lundi = 0
+        */
+
+        const premierJour =
+            (
+                new Date(
+                    annee,
+                    mois,
+                    1
+                ).getDay()
+                +
+                6
+            )
+            %
+            7;
+
+
+
+        /*
+        NOMBRE DE JOURS
+        */
+
+        const nombreJours =
+            new Date(
+                annee,
+                mois + 1,
+                0
+            ).getDate();
+
+
+
+        /*
+        CASES VIDES AVANT LE 1er
+        */
+
+        for (
+            let i = 0;
+            i < premierJour;
+            i++
+        ) {
+
+            const vide =
+                document.createElement(
+                    "div"
+                );
+
+
+            vide.className =
+                "jour-vide";
+
+
+            zone.appendChild(
+                vide
+            );
+
+        }
+
+
+
+        /*
+        JOURS DU MOIS
+        */
+
+        for (
+            let jour = 1;
+            jour <= nombreJours;
+            jour++
+        ) {
+
+            const valeurDate =
+                dateISO(
+                    annee,
+                    mois,
+                    jour
+                );
+
+
+            const bouton =
+                document.createElement(
+                    "button"
+                );
+
+
+            bouton.type =
+                "button";
+
+
+            bouton.className =
+                "jour-calendrier";
+
+
+            bouton.textContent =
+                jour;
+
+
+
+            /*
+            WEEK-END
+            */
+
+            const dateJour =
+                new Date(
+                    annee,
+                    mois,
+                    jour
+                );
+
+
+            const numeroJour =
+                dateJour.getDay();
+
+
+            if (
+                numeroJour === 0
+                ||
+                numeroJour === 6
+            ) {
+
+                bouton.classList.add(
+                    "weekend"
+                );
+
+            }
+
+
+
+            /*
+            DATE SÉLECTIONNÉE
+            */
+
+            if (
+                valeurDate
+                ===
+                dateSelectionnee
+            ) {
+
+                bouton.classList.add(
+                    "selectionne"
+                );
+
+            }
+
+
+
+            /*
+            AUJOURD'HUI
+            */
+
+            if (
+                valeurDate
+                ===
+                AUJOURD_HUI
+            ) {
+
+                bouton.classList.add(
+                    "aujourdhui"
+                );
+
+            }
+
+
+
+            /*
+            FUTUR = DÉSACTIVÉ
+            */
+
+            if (
+                valeurDate
+                >
+                AUJOURD_HUI
+            ) {
+
+                bouton.disabled =
+                    true;
+
+
+                bouton.classList.add(
+                    "futur"
+                );
+
+            }
+
+            else {
+
+                /*
+                DATE CLIQUABLE
+                */
+
+                bouton.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+
+                        dateSelectionnee =
+                            valeurDate;
+
+
+                        afficherDateSelectionnee(
+                            valeurDate
+                        );
+
+
+                        fermerCalendrier();
+
+
+                        chargerMenus(
+                            valeurDate
+                        );
+
+                    }
+                );
+
+            }
+
+
+            zone.appendChild(
+                bouton
+            );
+
+        }
+
+
+
+        /*
+        BLOQUE LE MOIS SUIVANT
+        SI NOUS SOMMES DÉJÀ
+        SUR LE MOIS ACTUEL.
+        */
+
+        const aujourdHui =
+            dateISOversDate(
+                AUJOURD_HUI
+            );
+
+
+        suivant.disabled =
+            (
+                annee
+                >
+                aujourdHui.getFullYear()
+            )
+            ||
+            (
+                annee
+                ===
+                aujourdHui.getFullYear()
+                &&
+                mois
+                >=
+                aujourdHui.getMonth()
+            );
+
+    }
+
+
+
+    /*
+    =====================================================
+    CHARGEMENT DES MENUS
+    =====================================================
+    */
+
+    async function chargerMenus(
+        dateISO = AUJOURD_HUI
+    ) {
 
         const chargement =
             document.querySelector(
@@ -166,13 +1129,74 @@
             );
 
 
+        const zoneMenus =
+            document.querySelector(
+                "#menus"
+            );
+
+
+        const historiqueDemande =
+            dateISO !== AUJOURD_HUI;
+
+
+        chargement.style.display =
+            "block";
+
+
+        chargement.classList.remove(
+            "erreur"
+        );
+
+
+        chargement.textContent =
+            historiqueDemande
+                ? "Chargement de l'historique..."
+                : "Chargement des menus...";
+
+
+        zoneMenus.innerHTML =
+            "";
+
+
+
         try {
 
+            const url =
+                new URL(
+                    API_URL
+                );
+
+
+            /*
+            Ancienne date :
+            D1 uniquement.
+            */
+
+            if (
+                historiqueDemande
+            ) {
+
+                url.searchParams.set(
+                    "date",
+                    dateISO
+                );
+
+            }
+
+
             const response =
-                await fetch(API_URL);
+                await fetch(
+                    url.toString(),
+                    {
+                        cache:
+                            "no-store"
+                    }
+                );
 
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
 
                 throw new Error(
                     `Erreur HTTP ${response.status}`
@@ -187,82 +1211,78 @@
 
 
             /*
-            =============================
-            MENUS
-            =============================
+            PROTECTION CONTRE
+            L'AFFICHAGE DU MENU ACTUEL
+            POUR UNE ANCIENNE DATE.
             */
 
+            if (
+                historiqueDemande
+                &&
+                (
+                    donnees.historique !== true
+                    ||
+                    donnees.dateDemandee !== dateISO
+                )
+            ) {
+
+                const menu4704 =
+                    creerMenuIndisponible(
+                        "4704"
+                    );
+
+
+                const menu4503 =
+                    creerMenuIndisponible(
+                        "4503"
+                    );
+
+
+                menu4704.message =
+                    "Aucun menu enregistré";
+
+
+                menu4503.message =
+                    "Aucun menu enregistré";
+
+
+                afficherToutesLesDonnees(
+                    menu4704,
+                    menu4503
+                );
+
+
+                chargement.style.display =
+                    "none";
+
+
+                return;
+
+            }
+
+
+
             const menu4704 =
-                donnees["4704"] ||
-                creerMenuIndisponible("4704");
+                donnees["4704"]
+                ||
+                creerMenuIndisponible(
+                    "4704"
+                );
 
 
             const menu4503 =
-                donnees["4503"] ||
-                creerMenuIndisponible("4503");
+                donnees["4503"]
+                ||
+                creerMenuIndisponible(
+                    "4503"
+                );
 
 
-
-            /*
-            =============================
-            STATUTS
-            =============================
-            */
-
-            afficherStatut(
-                "4704",
-                menu4704
-            );
-
-
-            afficherStatut(
-                "4503",
-                menu4503
-            );
-
-
-
-            /*
-            =============================
-            DATE
-            =============================
-            */
-
-            afficherDate(
+            afficherToutesLesDonnees(
                 menu4704,
                 menu4503
             );
 
-
-
-            /*
-            =============================
-            MENUS
-            =============================
-            */
-
-            afficherMenus(
-                menu4704,
-                menu4503
-            );
-
-
-
-            /*
-            =============================
-            LARGEUR
-            =============================
-            */
-
-            ajusterLargeurColonnes();
-
-
-
-            /*
-            =============================
-            FIN DU CHARGEMENT
-            =============================
-            */
 
             chargement.style.display =
                 "none";
@@ -271,11 +1291,15 @@
 
         catch (erreur) {
 
-            console.error(erreur);
+            console.error(
+                erreur
+            );
 
 
             chargement.textContent =
-                "Impossible de contacter le service des menus.";
+                historiqueDemande
+                    ? "Impossible de charger l'historique."
+                    : "Impossible de charger les menus.";
 
 
             chargement.classList.add(
@@ -290,7 +1314,66 @@
 
     /*
     =====================================================
-    MENU DE SECOURS
+    AFFICHAGE GLOBAL
+    =====================================================
+    */
+
+    function afficherToutesLesDonnees(
+        menu4704,
+        menu4503
+    ) {
+
+        afficherStatut(
+            "4704",
+            menu4704
+        );
+
+
+        afficherStatut(
+            "4503",
+            menu4503
+        );
+
+
+        afficherMiseAJour(
+            "4704",
+            menu4704
+        );
+
+
+        afficherMiseAJour(
+            "4503",
+            menu4503
+        );
+
+
+        afficherMoyennes(
+            "4704",
+            menu4704
+        );
+
+
+        afficherMoyennes(
+            "4503",
+            menu4503
+        );
+
+
+        afficherMenus(
+            menu4704,
+            menu4503
+        );
+
+
+        ajusterLargeurColonnes();
+
+    }
+
+
+
+    /*
+    =====================================================
+    MENU INDISPONIBLE
     =====================================================
     */
 
@@ -300,18 +1383,31 @@
 
         return {
 
-            restaurant: restaurant,
+            restaurant:
+                restaurant,
 
-            disponible: false,
+            disponible:
+                false,
 
             message:
-                "Menu non disponible",
+                dateSelectionnee === AUJOURD_HUI
+                    ? "Menu non disponible"
+                    : "Aucun menu enregistré",
 
-            date: "",
+            date:
+                "",
 
-            entrees: [],
-            plats: [],
-            desserts: []
+            miseAJour:
+                "",
+
+            entrees:
+                [],
+
+            plats:
+                [],
+
+            desserts:
+                []
 
         };
 
@@ -321,7 +1417,7 @@
 
     /*
     =====================================================
-    STATUT DU RESTAURANT
+    STATUT
     =====================================================
     */
 
@@ -341,7 +1437,8 @@
         ) {
 
             element.textContent =
-                menu.message ||
+                menu.message
+                ||
                 "Menu non disponible";
 
 
@@ -369,35 +1466,55 @@
 
     /*
     =====================================================
-    DATE
+    MISE À JOUR
     =====================================================
     */
 
-    function afficherDate(
-        menu4704,
-        menu4503
+    function afficherMiseAJour(
+        restaurant,
+        menu
     ) {
 
-        const date =
-            (
-                menu4704.disponible !== false
-                &&
-                menu4704.date
-            )
-
-            ? menu4704.date
-
-            : (
-                menu4503.disponible !== false
-                ? menu4503.date
-                : ""
+        const element =
+            document.querySelector(
+                `#maj-${restaurant}`
             );
 
 
-        document.querySelector(
-            "#date"
-        ).textContent =
-            date;
+        if (
+            menu.disponible !== false
+            &&
+            menu.miseAJour
+        ) {
+
+            const texte =
+                menu.miseAJour.replace(
+                    /^Dernière\s+mise\s+à\s+jour\s*:\s*/i,
+                    ""
+                );
+
+
+            element.textContent =
+                `Mis à jour : ${texte}`;
+
+
+            element.classList.add(
+                "visible"
+            );
+
+        }
+
+        else {
+
+            element.textContent =
+                "";
+
+
+            element.classList.remove(
+                "visible"
+            );
+
+        }
 
     }
 
@@ -405,7 +1522,254 @@
 
     /*
     =====================================================
-    AFFICHAGE DES MENUS
+    MOYENNES
+    =====================================================
+    */
+
+    function afficherMoyennes(
+        restaurant,
+        menu
+    ) {
+
+        const zone =
+            document.querySelector(
+                `#moyennes-${restaurant}`
+            );
+
+
+        const plats =
+            document.querySelector(
+                `#moyenne-plats-${restaurant}`
+            );
+
+
+        const desserts =
+            document.querySelector(
+                `#moyenne-desserts-${restaurant}`
+            );
+
+
+        if (
+            menu.disponible === false
+        ) {
+
+            plats.textContent = "";
+            desserts.textContent = "";
+
+
+            zone.classList.remove(
+                "visible"
+            );
+
+
+            return;
+
+        }
+
+
+        const moyennePlats =
+            calculerPrixMoyen(
+                menu.plats || []
+            );
+
+
+        const moyenneDesserts =
+            calculerPrixMoyen(
+                menu.desserts || []
+            );
+
+
+        if (
+            moyennePlats !== null
+        ) {
+
+            plats.textContent =
+                `Plat moyen : ${formaterPrix(moyennePlats)}`;
+
+        }
+
+        else {
+
+            plats.textContent =
+                "";
+
+        }
+
+
+        if (
+            moyenneDesserts !== null
+        ) {
+
+            desserts.textContent =
+                `Dessert moyen : ${formaterPrix(moyenneDesserts)}`;
+
+        }
+
+        else {
+
+            desserts.textContent =
+                "";
+
+        }
+
+
+        if (
+            moyennePlats !== null
+            ||
+            moyenneDesserts !== null
+        ) {
+
+            zone.classList.add(
+                "visible"
+            );
+
+        }
+
+        else {
+
+            zone.classList.remove(
+                "visible"
+            );
+
+        }
+
+    }
+
+
+
+    /*
+    =====================================================
+    CALCUL MOYENNE
+    =====================================================
+    */
+
+    function calculerPrixMoyen(
+        elements
+    ) {
+
+        const prix =
+            elements
+
+                .map(
+                    element =>
+                        convertirPrix(
+                            element.prix
+                        )
+                )
+
+                .filter(
+                    valeur =>
+                        Number.isFinite(
+                            valeur
+                        )
+                );
+
+
+        if (
+            prix.length === 0
+        ) {
+
+            return null;
+
+        }
+
+
+        const total =
+            prix.reduce(
+                (
+                    somme,
+                    valeur
+                ) =>
+                    somme + valeur,
+                0
+            );
+
+
+        return (
+            total / prix.length
+        );
+
+    }
+
+
+
+    /*
+    =====================================================
+    CONVERSION PRIX
+    =====================================================
+    */
+
+    function convertirPrix(
+        prix
+    ) {
+
+        if (!prix) {
+            return NaN;
+        }
+
+
+        const resultat =
+            String(prix)
+
+                .replace(
+                    /\u00a0/g,
+                    " "
+                )
+
+                .match(
+                    /[0-9]+(?:[.,][0-9]+)?/
+                );
+
+
+        if (!resultat) {
+            return NaN;
+        }
+
+
+        return parseFloat(
+            resultat[0]
+                .replace(
+                    ",",
+                    "."
+                )
+        );
+
+    }
+
+
+
+    /*
+    =====================================================
+    FORMAT PRIX
+    =====================================================
+    */
+
+    function formaterPrix(
+        prix
+    ) {
+
+        return new Intl.NumberFormat(
+            "fr-FR",
+            {
+                minimumFractionDigits:
+                    2,
+
+                maximumFractionDigits:
+                    2
+            }
+        ).format(
+            prix
+        )
+        +
+        " €";
+
+    }
+
+
+
+    /*
+    =====================================================
+    AFFICHAGE MENUS
     =====================================================
     */
 
@@ -424,13 +1788,6 @@
             "";
 
 
-
-        /*
-        =============================
-        AUCUN MENU DISPONIBLE
-        =============================
-        */
-
         if (
             menu4704.disponible === false
             &&
@@ -448,7 +1805,9 @@
 
 
             message.textContent =
-                "Aucun menu n'est disponible pour le moment.";
+                dateSelectionnee === AUJOURD_HUI
+                    ? "Aucun menu n'est disponible pour le moment."
+                    : "Aucun menu enregistré pour cette date.";
 
 
             zoneMenus.appendChild(
@@ -461,38 +1820,32 @@
         }
 
 
-
-        /*
-        =============================
-        CATÉGORIES
-        =============================
-        */
-
         categories.forEach(
             categorie => {
 
 
                 const plats4704 =
                     menu4704.disponible === false
-
-                    ? []
-
-                    : (
-                        menu4704[categorie.cle]
-                        || []
-                    );
+                        ? []
+                        : (
+                            menu4704[
+                                categorie.cle
+                            ]
+                            ||
+                            []
+                        );
 
 
                 const plats4503 =
                     menu4503.disponible === false
-
-                    ? []
-
-                    : (
-                        menu4503[categorie.cle]
-                        || []
-                    );
-
+                        ? []
+                        : (
+                            menu4503[
+                                categorie.cle
+                            ]
+                            ||
+                            []
+                        );
 
 
                 const nombreLignes =
@@ -502,20 +1855,11 @@
                     );
 
 
-
-                /*
-                Catégorie vide
-                des deux côtés.
-                */
-
                 if (
                     nombreLignes === 0
                 ) {
-
                     return;
-
                 }
-
 
 
                 const section =
@@ -527,11 +1871,6 @@
                 section.className =
                     "categorie-section";
 
-
-
-                /*
-                TITRE
-                */
 
                 const titre =
                     document.createElement(
@@ -552,11 +1891,6 @@
                 );
 
 
-
-                /*
-                LIGNES
-                */
-
                 const lignes =
                     document.createElement(
                         "div"
@@ -565,7 +1899,6 @@
 
                 lignes.className =
                     "lignes-plats";
-
 
 
                 for (
@@ -584,25 +1917,19 @@
                         "ligne-plat";
 
 
-
                     ligne.appendChild(
-
                         creerPlat(
                             plats4704[i],
                             "4704"
                         )
-
                     );
 
 
-
                     ligne.appendChild(
-
                         creerPlat(
                             plats4503[i],
                             "4503"
                         )
-
                     );
 
 
@@ -631,7 +1958,7 @@
 
     /*
     =====================================================
-    CRÉATION D'UN PLAT
+    PLAT
     =====================================================
     */
 
@@ -650,11 +1977,6 @@
             `plat restaurant-${restaurant}`;
 
 
-
-        /*
-        CASE VIDE
-        */
-
         if (!plat) {
 
             element.classList.add(
@@ -666,11 +1988,6 @@
 
         }
 
-
-
-        /*
-        NOM
-        */
 
         const nom =
             document.createElement(
@@ -686,11 +2003,6 @@
             plat.nom;
 
 
-
-        /*
-        PRIX
-        */
-
         const prix =
             document.createElement(
                 "div"
@@ -705,10 +2017,14 @@
             plat.prix || "";
 
 
+        element.appendChild(
+            nom
+        );
 
-        element.appendChild(nom);
 
-        element.appendChild(prix);
+        element.appendChild(
+            prix
+        );
 
 
         return element;
@@ -724,11 +2040,6 @@
     */
 
     function ajusterLargeurColonnes() {
-
-
-        /*
-        MOBILE = 50 / 50
-        */
 
         if (
             window.innerWidth <= 600
@@ -746,120 +2057,169 @@
         }
 
 
-
         let largeurMax =
             0;
 
 
+        function mesurerTexte(
+            element
+        ) {
+
+            if (
+                !element
+                ||
+                !element.textContent.trim()
+            ) {
+
+                return 0;
+
+            }
+
+
+            const style =
+                window.getComputedStyle(
+                    element
+                );
+
+
+            const mesure =
+                document.createElement(
+                    "span"
+                );
+
+
+            mesure.textContent =
+                element.textContent;
+
+
+            mesure.style.position =
+                "absolute";
+
+
+            mesure.style.visibility =
+                "hidden";
+
+
+            mesure.style.whiteSpace =
+                "nowrap";
+
+
+            mesure.style.font =
+                style.font;
+
+
+            mesure.style.fontWeight =
+                style.fontWeight;
+
+
+            mesure.style.fontSize =
+                style.fontSize;
+
+
+            mesure.style.fontFamily =
+                style.fontFamily;
+
+
+            mesure.style.letterSpacing =
+                style.letterSpacing;
+
+
+            document.body.appendChild(
+                mesure
+            );
+
+
+            const largeur =
+                mesure
+                    .getBoundingClientRect()
+                    .width;
+
+
+            mesure.remove();
+
+
+            return largeur;
+
+        }
+
 
         document.querySelectorAll(
-            ".plat:not(.plat-vide)"
+            ".nom, .prix"
         )
         .forEach(
-            plat => {
-
-
-                const nom =
-                    plat.querySelector(
-                        ".nom"
-                    );
-
-
-                const prix =
-                    plat.querySelector(
-                        ".prix"
-                    );
-
-
-                const largeurNom =
-                    nom
-                    ? nom.scrollWidth
-                    : 0;
-
-
-                const largeurPrix =
-                    prix
-                    ? prix.scrollWidth
-                    : 0;
-
+            element => {
 
                 largeurMax =
                     Math.max(
-
                         largeurMax,
-
-                        largeurNom,
-
-                        largeurPrix
-
+                        mesurerTexte(
+                            element
+                        )
                     );
 
             }
         );
 
 
+        document.querySelectorAll(
+            ".numero-restaurant, .mise-a-jour, .moyenne-prix"
+        )
+        .forEach(
+            element => {
 
-        /*
-        Si aucun menu n'est disponible,
-        on conserve une taille correcte.
-        */
+                largeurMax =
+                    Math.max(
+                        largeurMax,
+                        mesurerTexte(
+                            element
+                        )
+                    );
 
-        const marge =
-            28;
-
-
-        const largeurMinimum =
-            150;
+            }
+        );
 
 
         const largeurFinale =
             Math.max(
-
-                largeurMax + marge,
-
-                largeurMinimum
-
+                Math.ceil(
+                    largeurMax
+                )
+                +
+                36,
+                180
             );
-
 
 
         document.documentElement
             .style
             .setProperty(
-
                 "--col-size",
-
                 `${largeurFinale}px`
-
             );
 
     }
 
 
 
-    /*
-    =====================================================
-    REDIMENSIONNEMENT
-    =====================================================
-    */
-
     window.addEventListener(
-
         "resize",
-
         ajusterLargeurColonnes
-
     );
 
 
 
     /*
     =====================================================
-    LANCEMENT
+    DÉMARRAGE
     =====================================================
     */
 
-    chargerMenus();
+    initialiserCalendrier();
+
+
+    chargerMenus(
+        AUJOURD_HUI
+    );
 
 </script>
 

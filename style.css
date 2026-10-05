@@ -1,11 +1,11 @@
+/* =============================
+   RESET
+============================= */
+
 * {
     box-sizing: border-box;
 }
 
-
-/* =============================
-   BASE
-============================= */
 
 html,
 body {
@@ -17,18 +17,29 @@ body {
 }
 
 
+
+/* =============================
+   PAGE
+============================= */
+
 body {
     min-height: 100vh;
 
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
 
-    font-family: Arial, sans-serif;
+    font-family:
+        Arial,
+        sans-serif;
 
-    background: #eef2f6;
-    color: #1f2937;
+    background:
+        #eef2f6;
+
+    color:
+        #1f2937;
 }
+
 
 
 /* =============================
@@ -36,25 +47,38 @@ body {
 ============================= */
 
 .container {
-    width: fit-content;
+    width:
+        fit-content;
 
-    max-width: calc(100% - 30px);
+    max-width:
+        calc(100% - 30px);
 
-    margin: 25px auto;
+    margin:
+        25px auto;
 
-    background: white;
+    background:
+        white;
 
-    border-radius: 16px;
-    overflow: hidden;
+    border-radius:
+        16px;
+
+    overflow:
+        hidden;
 
     box-shadow:
         0 12px 35px
-        rgba(15, 23, 42, 0.10);
+        rgba(
+            15,
+            23,
+            42,
+            0.10
+        );
 }
 
 
+
 /* =============================
-   HEADER
+   EN-TÊTE
 ============================= */
 
 .page-header {
@@ -63,30 +87,386 @@ body {
         10px
         11px;
 
-    text-align: center;
+    text-align:
+        center;
 
-    background: #1e293b;
+    background:
+        #1e293b;
 
-    color: white;
+    color:
+        white;
 }
 
 
 h1 {
     margin: 0;
 
-    font-size: 22px;
+    font-size:
+        22px;
+}
+
+
+
+/* =============================
+   DATE CLIQUABLE
+============================= */
+
+.date-selection {
+    display:
+        inline-block;
+
+    margin-top:
+        4px;
+
+    cursor:
+        pointer;
+
+    user-select:
+        none;
 }
 
 
 .date {
-    margin-top: 4px;
+    font-size:
+        12px;
 
-    min-height: 14px;
+    color:
+        #cbd5e1;
 
-    font-size: 12px;
+    cursor:
+        pointer;
 
-    color: #cbd5e1;
+    user-select:
+        none;
+
+    border-bottom:
+        1px dashed
+        rgba(
+            203,
+            213,
+            225,
+            0.55
+        );
 }
+
+
+.date-selection:hover .date {
+    color:
+        white;
+
+    border-bottom-color:
+        white;
+}
+
+
+
+/* =============================
+   CALENDRIER PERSONNALISÉ
+============================= */
+
+.calendrier {
+    position:
+        fixed;
+
+    z-index:
+        1000;
+
+    display:
+        none;
+
+    width:
+        310px;
+
+    padding:
+        14px;
+
+    background:
+        white;
+
+    border:
+        1px solid #d1d5db;
+
+    border-radius:
+        16px;
+
+    box-shadow:
+        0 14px 40px
+        rgba(
+            15,
+            23,
+            42,
+            0.22
+        );
+
+    user-select:
+        none;
+}
+
+
+.calendrier.ouvert {
+    display:
+        block;
+}
+
+
+
+/* =============================
+   EN-TÊTE CALENDRIER
+============================= */
+
+.calendrier-entete {
+    display:
+        grid;
+
+    grid-template-columns:
+        40px 1fr 40px;
+
+    align-items:
+        center;
+
+    margin-bottom:
+        12px;
+}
+
+
+.titre-mois {
+    text-align:
+        center;
+
+    font-size:
+        17px;
+
+    font-weight:
+        700;
+
+    text-transform:
+        capitalize;
+
+    user-select:
+        none;
+}
+
+
+.bouton-mois {
+    width:
+        36px;
+
+    height:
+        36px;
+
+    padding:
+        0;
+
+    border:
+        none;
+
+    background:
+        transparent;
+
+    border-radius:
+        8px;
+
+    font-size:
+        30px;
+
+    line-height:
+        30px;
+
+    cursor:
+        pointer;
+
+    user-select:
+        none;
+}
+
+
+.bouton-mois:hover:not(:disabled) {
+    background:
+        #eef2f6;
+}
+
+
+.bouton-mois:disabled {
+    opacity:
+        0.25;
+
+    cursor:
+        default;
+}
+
+
+
+/* =============================
+   JOURS DE LA SEMAINE
+============================= */
+
+.jours-semaine {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    margin-bottom:
+        5px;
+
+    text-align:
+        center;
+
+    font-size:
+        12px;
+
+    font-weight:
+        600;
+
+    color:
+        #64748b;
+
+    user-select:
+        none;
+}
+
+
+.jours-semaine > div {
+    padding:
+        5px 0;
+}
+
+
+.jours-semaine .weekend {
+    color:
+        #b91c1c;
+}
+
+
+
+/* =============================
+   JOURS DU CALENDRIER
+============================= */
+
+.jours-calendrier {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap:
+        4px;
+}
+
+
+.jour-vide {
+    height:
+        35px;
+}
+
+
+.jour-calendrier {
+    height:
+        35px;
+
+    padding:
+        0;
+
+    border:
+        none;
+
+    border-radius:
+        7px;
+
+    background:
+        #f1f3f5;
+
+    color:
+        #111827;
+
+    font-family:
+        inherit;
+
+    font-size:
+        13px;
+
+    font-weight:
+        600;
+
+    /*
+    C'EST CETTE PARTIE QUI
+    GARANTIT LA MAIN SUR LES JOURS.
+    */
+
+    cursor:
+        pointer;
+
+    user-select:
+        none;
+
+    -webkit-user-select:
+        none;
+}
+
+
+.jour-calendrier:hover:not(:disabled) {
+    background:
+        #dbeafe;
+}
+
+
+
+/* WEEK-END */
+
+.jour-calendrier.weekend {
+    color:
+        #b91c1c;
+}
+
+
+
+/* AUJOURD'HUI */
+
+.jour-calendrier.aujourdhui {
+    outline:
+        1px solid
+        #2563eb;
+
+    outline-offset:
+        -1px;
+}
+
+
+
+/* DATE SÉLECTIONNÉE */
+
+.jour-calendrier.selectionne {
+    background:
+        #2563eb;
+
+    color:
+        white;
+
+    outline:
+        none;
+}
+
+
+.jour-calendrier.selectionne.weekend {
+    color:
+        white;
+}
+
+
+
+/* DATE FUTURE */
+
+.jour-calendrier.futur,
+.jour-calendrier:disabled {
+    opacity:
+        0.30;
+
+    cursor:
+        default;
+}
+
 
 
 /* =============================
@@ -94,42 +474,135 @@ h1 {
 ============================= */
 
 .restaurants {
-    display: grid;
+    display:
+        grid;
 
     grid-template-columns:
-        var(--col-size, 150px)
-        var(--col-size, 150px);
+        var(--col-size, 180px)
+        var(--col-size, 180px);
 }
 
 
 .restaurant {
     padding:
-        8px
-        5px;
+        7px
+        5px
+        7px;
 
-    text-align: center;
+    text-align:
+        center;
 
-    font-weight: 800;
+    font-weight:
+        800;
 }
 
 
 .numero-restaurant {
-    font-size: 19px;
+    font-size:
+        19px;
 }
 
+
+
+/* =============================
+   4704
+============================= */
 
 .restaurant-4704 {
-    background: #fff4e8;
+    background:
+        #fff4e8;
 
-    color: #b45309;
+    color:
+        #b45309;
 }
 
+
+
+/* =============================
+   4503
+============================= */
 
 .restaurant-4503 {
-    background: #edf6ff;
+    background:
+        #edf6ff;
 
-    color: #1d4ed8;
+    color:
+        #1d4ed8;
 }
+
+
+
+/* =============================
+   HEURE DE MISE À JOUR
+============================= */
+
+.mise-a-jour {
+    display:
+        none;
+
+    margin-top:
+        3px;
+
+    font-size:
+        10px;
+
+    font-weight:
+        500;
+
+    opacity:
+        0.75;
+}
+
+
+.mise-a-jour.visible {
+    display:
+        block;
+}
+
+
+
+/* =============================
+   MOYENNES
+============================= */
+
+.moyennes-prix {
+    display:
+        none;
+
+    margin-top:
+        5px;
+
+    padding-top:
+        4px;
+
+    border-top:
+        1px solid
+        rgba(
+            100,
+            116,
+            139,
+            0.20
+        );
+}
+
+
+.moyennes-prix.visible {
+    display:
+        block;
+}
+
+
+.moyenne-prix {
+    font-size:
+        10px;
+
+    line-height:
+        1.4;
+
+    font-weight:
+        700;
+}
+
 
 
 /* =============================
@@ -137,20 +610,28 @@ h1 {
 ============================= */
 
 .statut-menu {
-    display: none;
+    display:
+        none;
 
-    margin-top: 3px;
+    margin-top:
+        4px;
 
-    font-size: 10px;
-    font-weight: 600;
+    font-size:
+        10px;
 
-    color: #b91c1c;
+    font-weight:
+        700;
+
+    color:
+        #b91c1c;
 }
 
 
 .statut-menu.visible {
-    display: block;
+    display:
+        block;
 }
+
 
 
 /* =============================
@@ -159,30 +640,41 @@ h1 {
 
 .categorie-section {
     border-top:
-        1px solid #dbe1e8;
+        1px solid
+        #dbe1e8;
 }
 
 
 .categorie-titre {
-    margin: 0;
+    margin:
+        0;
 
     padding:
         7px
         5px;
 
-    text-align: center;
+    text-align:
+        center;
 
-    font-size: 13px;
-    font-weight: 800;
+    font-size:
+        13px;
 
-    text-transform: uppercase;
+    font-weight:
+        800;
 
-    letter-spacing: 0.07em;
+    text-transform:
+        uppercase;
 
-    color: white;
+    letter-spacing:
+        0.07em;
 
-    background: #334155;
+    color:
+        white;
+
+    background:
+        #334155;
 }
+
 
 
 /* =============================
@@ -190,14 +682,17 @@ h1 {
 ============================= */
 
 .ligne-plat {
-    display: grid;
+    display:
+        grid;
 
     grid-template-columns:
-        var(--col-size, 150px)
-        var(--col-size, 150px);
+        var(--col-size, 180px)
+        var(--col-size, 180px);
 
-    align-items: stretch;
+    align-items:
+        stretch;
 }
+
 
 
 /* =============================
@@ -205,46 +700,48 @@ h1 {
 ============================= */
 
 .plat {
-    min-width: 0;
+    min-width:
+        0;
 
     padding:
         7px
         9px;
 
-    text-align: center;
+    text-align:
+        center;
 
     border-bottom:
         1px solid
-        rgba(148, 163, 184, 0.28);
+        rgba(
+            148,
+            163,
+            184,
+            0.28
+        );
 }
 
 
-/*
-La cellule gauche garde toujours
-la séparation centrale.
-*/
-
 .plat.restaurant-4704 {
-    background: #fffaf5;
+    background:
+        #fffaf5;
 
     border-right:
-        1px solid #d8dde3;
+        1px solid
+        #d8dde3;
 }
 
 
 .plat.restaurant-4503 {
-    background: #f7fbff;
+    background:
+        #f7fbff;
 }
 
-
-/*
-Dernière ligne avant la catégorie
-suivante.
-*/
 
 .ligne-plat:last-child .plat {
-    border-bottom: none;
+    border-bottom:
+        none;
 }
+
 
 
 /* =============================
@@ -252,14 +749,19 @@ suivante.
 ============================= */
 
 .nom {
-    font-size: 13px;
+    font-size:
+        13px;
 
-    line-height: 1.25;
+    line-height:
+        1.25;
 
-    text-align: center;
+    text-align:
+        center;
 
-    white-space: nowrap;
+    white-space:
+        nowrap;
 }
+
 
 
 /* =============================
@@ -267,23 +769,31 @@ suivante.
 ============================= */
 
 .prix {
-    margin-top: 2px;
+    margin-top:
+        2px;
 
-    text-align: center;
+    text-align:
+        center;
 
-    font-size: 12px;
-    font-weight: 800;
+    font-size:
+        12px;
+
+    font-weight:
+        800;
 }
 
 
 .restaurant-4704 .prix {
-    color: #b45309;
+    color:
+        #b45309;
 }
 
 
 .restaurant-4503 .prix {
-    color: #1d4ed8;
+    color:
+        #1d4ed8;
 }
+
 
 
 /* =============================
@@ -291,8 +801,10 @@ suivante.
 ============================= */
 
 .plat-vide {
-    min-height: 47px;
+    min-height:
+        47px;
 }
+
 
 
 /* =============================
@@ -300,15 +812,23 @@ suivante.
 ============================= */
 
 .message-global {
-    padding: 30px 20px;
+    padding:
+        30px
+        20px;
 
-    text-align: center;
+    text-align:
+        center;
 
-    font-size: 13px;
-    font-weight: 600;
+    font-size:
+        13px;
 
-    color: #64748b;
+    font-weight:
+        600;
+
+    color:
+        #64748b;
 }
+
 
 
 /* =============================
@@ -316,19 +836,25 @@ suivante.
 ============================= */
 
 #chargement {
-    padding: 25px;
+    padding:
+        25px;
 
-    text-align: center;
+    text-align:
+        center;
 
-    color: #64748b;
+    color:
+        #64748b;
 }
 
 
 #chargement.erreur {
-    color: #b91c1c;
+    color:
+        #b91c1c;
 
-    font-weight: bold;
+    font-weight:
+        bold;
 }
+
 
 
 /* =============================
@@ -338,21 +864,29 @@ suivante.
 @media (max-width: 600px) {
 
     body {
-        align-items: flex-start;
+        align-items:
+            flex-start;
 
-        background: white;
+        background:
+            white;
     }
 
 
     .container {
-        width: 100%;
-        max-width: 100%;
+        width:
+            100%;
 
-        margin: 0;
+        max-width:
+            100%;
 
-        border-radius: 0;
+        margin:
+            0;
 
-        box-shadow: none;
+        border-radius:
+            0;
+
+        box-shadow:
+            none;
     }
 
 
@@ -365,18 +899,21 @@ suivante.
 
 
     h1 {
-        font-size: 18px;
+        font-size:
+            18px;
     }
 
 
     .date {
-        font-size: 11px;
+        font-size:
+            11px;
     }
 
 
     .restaurants,
     .ligne-plat {
-        width: 100%;
+        width:
+            100%;
 
         grid-template-columns:
             minmax(0, 1fr)
@@ -386,18 +923,50 @@ suivante.
 
     .restaurant {
         padding:
-            7px
+            6px
             4px;
     }
 
 
     .numero-restaurant {
-        font-size: 16px;
+        font-size:
+            16px;
+    }
+
+
+    .mise-a-jour {
+        margin-top:
+            2px;
+
+        font-size:
+            9px;
+    }
+
+
+    .moyennes-prix {
+        margin-top:
+            4px;
+
+        padding-top:
+            3px;
+    }
+
+
+    .moyenne-prix {
+        font-size:
+            9px;
+
+        line-height:
+            1.35;
     }
 
 
     .statut-menu {
-        font-size: 9px;
+        margin-top:
+            3px;
+
+        font-size:
+            9px;
     }
 
 
@@ -406,7 +975,8 @@ suivante.
             6px
             3px;
 
-        font-size: 11px;
+        font-size:
+            11px;
     }
 
 
@@ -418,23 +988,39 @@ suivante.
 
 
     .nom {
-        font-size: 12px;
+        font-size:
+            12px;
 
-        white-space: normal;
+        white-space:
+            normal;
 
-        overflow-wrap: anywhere;
+        overflow-wrap:
+            anywhere;
     }
 
 
     .prix {
-        margin-top: 2px;
+        margin-top:
+            2px;
 
-        font-size: 11px;
+        font-size:
+            11px;
     }
 
 
     .plat-vide {
-        min-height: 43px;
+        min-height:
+            43px;
+    }
+
+
+    /*
+    Calendrier adapté au téléphone.
+    */
+
+    .calendrier {
+        width:
+            min(310px, calc(100vw - 20px));
     }
 
 }
