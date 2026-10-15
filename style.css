@@ -106,6 +106,65 @@ h1 {
 
 
 /* =============================
+   NAVIGATION DE DATE
+============================= */
+
+.navigation-date {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    margin-top: 4px;
+}
+
+
+.navigation-date .date-selection {
+    margin-top: 0;
+}
+
+
+.bouton-date {
+    width: 26px;
+    height: 18px;
+
+    padding: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 6px;
+
+    background: transparent;
+    color: #cbd5e1;
+
+    font-family: inherit;
+    font-size: 19px;
+    line-height: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+    user-select: none;
+
+    transform: translateY(1px);
+}
+
+
+.bouton-date:hover:not(:disabled) {
+    color: white;
+    background: rgba(255, 255, 255, 0.10);
+}
+
+
+.bouton-date:disabled {
+    opacity: 0.25;
+    cursor: default;
+}
+
+
+/* =============================
    ZONE DE TABLEAU
 ============================= */
 
@@ -440,6 +499,65 @@ h1 {
 }
 
 
+/* =============================
+   VARIATION DES PRIX
+============================= */
+
+.variation-prix {
+    display: inline-block;
+
+    margin-left: 5px;
+
+    font-size: 15px;
+    line-height: 1;
+    font-weight: 900;
+
+    vertical-align: -1px;
+}
+
+
+.variation-prix.hausse {
+    color: #dc2626;
+}
+
+
+.variation-prix.baisse {
+    color: #16a34a;
+}
+
+
+.avertissement-comparaison {
+    display: inline-block;
+
+    margin-left: 5px;
+
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 900;
+
+    color: #d97706;
+
+    vertical-align: 0;
+    cursor: help;
+}
+
+
+.difference-cantines {
+    display: inline-block;
+
+    margin-left: 5px;
+
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 900;
+
+    color: #7c3aed;
+
+    vertical-align: -1px;
+    cursor: help;
+}
+
+
 .plat-vide {
     min-height: 47px;
 }
@@ -714,6 +832,40 @@ h1 {
 
     .date {
         font-size: 11px;
+    }
+
+
+    .navigation-date {
+        gap: 5px;
+    }
+
+
+    .bouton-date {
+        width: 22px;
+        height: 16px;
+
+        font-size: 18px;
+        line-height: 11px;
+
+        transform: translateY(1px);
+    }
+
+
+    .variation-prix {
+        margin-left: 4px;
+        font-size: 14px;
+    }
+
+
+    .avertissement-comparaison {
+        margin-left: 4px;
+        font-size: 11px;
+    }
+
+
+    .difference-cantines {
+        margin-left: 4px;
+        font-size: 13px;
     }
 
 

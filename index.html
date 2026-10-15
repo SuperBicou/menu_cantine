@@ -30,15 +30,41 @@
 
         <h1>Menus du jour</h1>
 
-        <div
-            id="date-selection"
-            class="date-selection"
-            title="Choisir une date"
-        >
+        <div class="navigation-date">
+
+            <button
+                id="date-precedente"
+                class="bouton-date"
+                type="button"
+                aria-label="Jour précédent"
+                title="Jour précédent"
+            >
+                ‹
+            </button>
+
+
             <div
-                id="date-affichee"
-                class="date"
-            ></div>
+                id="date-selection"
+                class="date-selection"
+                title="Choisir une date"
+            >
+                <div
+                    id="date-affichee"
+                    class="date"
+                ></div>
+            </div>
+
+
+            <button
+                id="date-suivante"
+                class="bouton-date"
+                type="button"
+                aria-label="Jour suivant"
+                title="Jour suivant"
+            >
+                ›
+            </button>
+
         </div>
 
     </header>
@@ -321,6 +347,76 @@
 
 
 
+    function mettreAJourBoutonsDate() {
+
+        const boutonSuivant =
+            document.querySelector(
+                "#date-suivante"
+            );
+
+
+        boutonSuivant.disabled =
+            dateSelectionnee >= AUJOURD_HUI;
+
+    }
+
+
+
+    function changerDateSelectionnee(
+        nombreJours
+    ) {
+
+        const date =
+            dateISOversDate(
+                dateSelectionnee
+            );
+
+
+        date.setDate(
+            date.getDate() + nombreJours
+        );
+
+
+        const nouvelleDate =
+            creerDateISO(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate()
+            );
+
+
+        if (
+            nouvelleDate > AUJOURD_HUI
+        ) {
+
+            return;
+
+        }
+
+
+        dateSelectionnee =
+            nouvelleDate;
+
+
+        afficherDateSelectionnee(
+            nouvelleDate
+        );
+
+
+        mettreAJourBoutonsDate();
+
+
+        fermerCalendrier();
+
+
+        chargerMenus(
+            nouvelleDate
+        );
+
+    }
+
+
+
     /*
     =====================================================
     CALENDRIER
@@ -332,6 +428,9 @@
         afficherDateSelectionnee(
             AUJOURD_HUI
         );
+
+
+        mettreAJourBoutonsDate();
 
 
         moisCalendrier =
@@ -349,10 +448,57 @@
             );
 
 
+        const boutonDatePrecedente =
+            document.querySelector(
+                "#date-precedente"
+            );
+
+
+        const boutonDateSuivante =
+            document.querySelector(
+                "#date-suivante"
+            );
+
+
         const calendrier =
             document.querySelector(
                 "#calendrier"
             );
+
+
+        boutonDatePrecedente.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+
+                changerDateSelectionnee(
+                    -1
+                );
+
+            }
+        );
+
+
+        boutonDateSuivante.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+
+                if (this.disabled) {
+                    return;
+                }
+
+
+                changerDateSelectionnee(
+                    1
+                );
+
+            }
+        );
 
 
         zoneDate.addEventListener(
@@ -802,6 +948,9 @@
                         afficherDateSelectionnee(
                             valeurDate
                         );
+
+
+                        mettreAJourBoutonsDate();
 
 
                         fermerCalendrier();
@@ -1850,6 +1999,13 @@
                     );
 
 
+                const produitsPrixDifferents =
+                    calculerProduitsPrixDifferentsEntreCantines(
+                        colonnes,
+                        categorie.cle
+                    );
+
+
                 const nombreLignes =
                     Math.max(
                         ...listes.map(
@@ -1928,7 +2084,16 @@
                             const cellule =
                                 creerPlat(
                                     plat,
-                                    colonne.restaurant
+                                    colonne.restaurant,
+                                    Boolean(
+                                        plat
+                                        &&
+                                        produitsPrixDifferents.has(
+                                            normaliserNomPourComparaisonPrix(
+                                                plat.nom
+                                            )
+                                        )
+                                    )
                                 );
 
 
@@ -1973,7 +2138,8 @@
 
     function creerPlat(
         plat,
-        restaurant
+        restaurant,
+        prixDifferentCantines = false
     ) {
 
         const element =
@@ -2022,8 +2188,110 @@
             "prix";
 
 
-        prix.textContent =
-            plat.prix || "";
+        prix.appendChild(
+            document.createTextNode(
+                plat.prix || ""
+            )
+        );
+
+
+        if (
+            plat.variation === "hausse"
+            ||
+            plat.variation === "baisse"
+        ) {
+
+            if (
+                plat.comparaisonAutreCantine === true
+            ) {
+
+                const avertissement =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                avertissement.className =
+                    "avertissement-comparaison";
+
+
+                avertissement.textContent =
+                    "⚠";
+
+
+                avertissement.title =
+                    creerTitreComparaisonPrix(
+                        plat,
+                        restaurant,
+                        true
+                    );
+
+
+                prix.appendChild(
+                    avertissement
+                );
+
+            }
+
+
+            const variation =
+                document.createElement(
+                    "span"
+                );
+
+
+            variation.className =
+                `variation-prix ${plat.variation}`;
+
+
+            variation.textContent =
+                plat.variation === "hausse"
+                    ? "↑"
+                    : "↓";
+
+
+            variation.title =
+                creerTitreComparaisonPrix(
+                    plat,
+                    restaurant,
+                    plat.comparaisonAutreCantine === true
+                );
+
+
+            prix.appendChild(
+                variation
+            );
+
+        }
+
+
+        if (
+            prixDifferentCantines
+        ) {
+
+            const difference =
+                document.createElement(
+                    "span"
+                );
+
+
+            difference.className =
+                "difference-cantines";
+
+
+            difference.textContent =
+                "≠";
+
+
+            difference.title =
+                "Prix différent entre les deux cantines pour ce produit à cette date";
+
+
+            prix.appendChild(
+                difference
+            );
+
+        }
 
 
         element.appendChild(
@@ -2037,6 +2305,272 @@
 
 
         return element;
+
+    }
+
+
+
+    function creerTitreComparaisonPrix(
+        plat,
+        restaurant,
+        autreCantine
+    ) {
+
+        const prixPrecedent =
+            Number(
+                plat.prixPrecedent
+            );
+
+
+        const prixTexte =
+            Number.isFinite(
+                prixPrecedent
+            )
+                ? formaterPrix(
+                    prixPrecedent
+                )
+                : "prix précédent inconnu";
+
+
+        const dateTexte =
+            plat.dateReference
+                ? ` le ${formaterDateCourte(plat.dateReference)}`
+                : "";
+
+
+        if (
+            autreCantine
+        ) {
+
+            const restaurantReference =
+                plat.restaurantReference
+                ||
+                (restaurant === "4704" ? "4503" : "4704");
+
+
+            return (
+                `Comparé au dernier prix connu au ${restaurantReference} : `
+                +
+                `${prixTexte}${dateTexte}`
+            );
+
+        }
+
+
+        return (
+            `Prix précédent dans cette cantine : `
+            +
+            `${prixTexte}${dateTexte}`
+        );
+
+    }
+
+
+
+    function calculerProduitsPrixDifferentsEntreCantines(
+        colonnes,
+        categorieCle
+    ) {
+
+        const produits =
+            new Map();
+
+
+        colonnes.forEach(
+            colonne => {
+
+                if (
+                    !colonne.menu
+                    ||
+                    colonne.menu.disponible === false
+                ) {
+                    return;
+                }
+
+
+                const liste =
+                    colonne.menu[
+                        categorieCle
+                    ]
+                    ||
+                    [];
+
+
+                liste.forEach(
+                    element => {
+
+                        const prix =
+                            convertirPrix(
+                                element.prix
+                            );
+
+
+                        if (
+                            !Number.isFinite(
+                                prix
+                            )
+                        ) {
+                            return;
+                        }
+
+
+                        const cle =
+                            normaliserNomPourComparaisonPrix(
+                                element.nom
+                            );
+
+
+                        if (!cle) {
+                            return;
+                        }
+
+
+                        if (
+                            !produits.has(
+                                cle
+                            )
+                        ) {
+
+                            produits.set(
+                                cle,
+                                {
+                                    "4704": new Set(),
+                                    "4503": new Set()
+                                }
+                            );
+
+                        }
+
+
+                        produits.get(
+                            cle
+                        )[
+                            colonne.restaurant
+                        ].add(
+                            prix.toFixed(4)
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        const differences =
+            new Set();
+
+
+        produits.forEach(
+            (
+                valeurs,
+                cle
+            ) => {
+
+                if (
+                    valeurs["4704"].size === 0
+                    ||
+                    valeurs["4503"].size === 0
+                ) {
+                    return;
+                }
+
+
+                let differenceTrouvee =
+                    false;
+
+
+                for (
+                    const prix4704
+                    of valeurs["4704"]
+                ) {
+
+                    for (
+                        const prix4503
+                        of valeurs["4503"]
+                    ) {
+
+                        if (
+                            Math.abs(
+                                Number(prix4704)
+                                -
+                                Number(prix4503)
+                            )
+                            >
+                            0.0001
+                        ) {
+
+                            differenceTrouvee =
+                                true;
+
+                            break;
+
+                        }
+
+                    }
+
+
+                    if (
+                        differenceTrouvee
+                    ) {
+                        break;
+                    }
+
+                }
+
+
+                if (
+                    differenceTrouvee
+                ) {
+
+                    differences.add(
+                        cle
+                    );
+
+                }
+
+            }
+        );
+
+
+        return differences;
+
+    }
+
+
+
+    function normaliserNomPourComparaisonPrix(
+        texte
+    ) {
+
+        return String(
+            texte
+            ||
+            ""
+        )
+
+            .normalize(
+                "NFD"
+            )
+
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+
+            .replace(
+                /[’`]/g,
+                "'"
+            )
+
+            .toLowerCase()
+
+            .replace(
+                /\s+/g,
+                " "
+            )
+
+            .trim();
 
     }
 
