@@ -2177,6 +2177,75 @@
         nom.textContent =
             plat.nom;
 
+        const seriePresence =
+            Number(
+                plat.seriePresence
+            );
+
+        if (
+            Number.isFinite(
+                seriePresence
+            )
+            &&
+            seriePresence >= 2
+        ) {
+
+            const repetition =
+                document.createElement(
+                    "span"
+                );
+
+
+            repetition.className =
+                "repetition-presence";
+
+
+            const fleche =
+                document.createElement(
+                    "span"
+                );
+
+
+            fleche.className =
+                "repetition-fleche";
+
+
+            fleche.textContent =
+                "↻";
+
+
+            const exposant =
+                document.createElement(
+                    "sup"
+                );
+
+
+            exposant.textContent =
+                seriePresence > 9
+                    ? "9+"
+                    : seriePresence;
+
+
+            repetition.appendChild(
+                fleche
+            );
+
+
+            repetition.appendChild(
+                exposant
+            );
+
+
+            repetition.title =
+                `Présent ${seriePresence} jours de cantine consécutifs`;
+
+
+            nom.appendChild(
+                repetition
+            );
+
+        }
+
 
         const prix =
             document.createElement(
